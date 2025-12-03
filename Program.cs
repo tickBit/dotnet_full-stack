@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-
+using System.Security.Claims;
 
 // DotNetEnv lataa .env-tiedoston (jos käytät)
 DotNetEnv.Env.Load();
@@ -96,6 +96,25 @@ app.MapGet("/api/secret", [Authorize] () =>
 {
     return Results.Ok("Tämä on salainen tieto vain kirjautuneille!");
 });
+
+app.MapDelete("/api/users/delete", [Authorize] async (AppDbContext db, HttpContext context) =>
+{
+    var userEmail = context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+    if (string.IsNullOrEmpty(userEmail))
+        return Results.Unauthorized();
+
+    var user = await db.Users.FirstOrDefaultAsync(u => u.Email == userEmail);
+
+    if (user == null)
+        return Results.NotFound("User not found");
+
+    db.Users.Remove(user);
+    await db.SaveChangesAsync();
+
+    return Results.Ok("Account deleted successfully.");
+});
+
 
 app.Run();
 

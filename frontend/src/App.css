@@ -6,6 +6,7 @@
   background-color:cadetblue;
   padding: 10px;
   text-align: right;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
 }
 
 a {
@@ -59,6 +60,7 @@ input {
   color:whitesmoke;
   background-color: blue;
   margin-top: 0.5rem;
+  margin-left: 1rem;
 }
 
 .login {
@@ -67,4 +69,19 @@ input {
 
 .profile {
   text-align: center;
+}
+
+.dialog {
+  width: 20%;
+  height: 30%;
+  margin: auto auto;
+  position: fixed;
+  inset: 0;               /* top:0; right:0; bottom:0; left:0; */
+  background-color: rgba(205, 42, 42, 0.2);
+  text-align: center;
+  border-width: 3px;
+  border-style: groove;
+  border-radius: 5em;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+  z-index: 2000;
 }
