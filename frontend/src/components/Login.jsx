@@ -6,17 +6,18 @@ import React, { useEffect } from "react";
 
 const Login = () => {
 
-    const { username, login } = useAuth();    
+    const { useremail, login } = useAuth();    
     
     const [status, setStatus] = React.useState("Waiting");
     const [backgroundColor, setBackgroundColor] = React.useState("lightgrey");
 
     useEffect(() => {
-        if (username === "") {
+        
+        if (useremail === "") {
             setStatus("Logged out.");
             setBackgroundColor("lightgrey");
         }
-    }, [username]);
+    }, [useremail]);
        
     const handleLogin = async (e) => {
         e.preventDefault();
@@ -41,13 +42,11 @@ const Login = () => {
             const data = resp.data;
 
             if (data && data.token) {
-                login(username, data.token);
+                login(email, data.token);
                 
                 setStatus("Login successful.");
                 setBackgroundColor("lightgreen");
-                
-                console.log(data);
-    
+                    
             } else {
                 setStatus("Login failed. Check credentials.");
                 setBackgroundColor("red");
@@ -88,7 +87,7 @@ const Login = () => {
                 <button type="submit" className="buttons">Login</button>
             </div>
             </form>
-            {username !== "" && <Link to="/">Go back to home to see what's new</Link>}
+            {useremail !== "" && <Link to="/">Go back to home to see what's new</Link>}
             </div>
         </div>
         </>
