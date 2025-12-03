@@ -10,12 +10,12 @@ const Dialog = (props) => {
     
     return (
         <>
-            <div className="dialog">
+            <div className="dialog" style={{backgroundColor: props.color}}>
                 <h2>{props.title}</h2>
                 <br />
                 <br />
                 <button className="buttons" style={{backgroundColor: "red"}} onClick={handleYes} >{props.ok}</button>
-                <button className="buttons" onClick={handleNo} >{props.no}</button>
+                {props.no !== undefined ? <><button className="buttons" onClick={handleNo} >{props.no}</button></> : null}
             </div>
         </>
     )

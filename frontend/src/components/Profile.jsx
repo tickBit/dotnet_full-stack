@@ -8,6 +8,11 @@ const Profile = () => {
     
     const { useremail, token, logout } = useAuth();
     const [showDialog, setShowDialog] = React.useState(false);
+    const [showOk, setShowOk] = React.useState(false);
+    
+    const handleOk = () => {
+        setShowOk(false);
+    }
     
     const handleDeleteUser = async () => {
             
@@ -21,7 +26,8 @@ const Profile = () => {
             if (resp.status === 200) {
                 setShowDialog(false);
                 logout();
-                alert("Account deleted successfully.");
+                setShowOk(true);
+                
             } else {
                 alert("Failed to delete account.");
             }
@@ -34,7 +40,8 @@ const Profile = () => {
         <>
             <Header />
             <div className="profile">
-            {showDialog === true ? <Dialog title="Are you sure?" ok="Yes" no="Cancel" onCancel={() => setShowDialog(false)} onConfirm={() => handleDeleteUser()} /> : null}
+            {showOk === true ? <Dialog title={"Account deleted"} ok="Ok" onConfirm={() => handleOk()} color="lightgreen" /> : null}
+            {showDialog === true ? <Dialog title="Are you sure?" ok="Yes" no="Cancel" onCancel={() => setShowDialog(false)} onConfirm={() => handleDeleteUser()} color="lightred" /> : null}
             {useremail === "" ? <><div>Please log in to view your profile.</div>
             </> :
             <>           
