@@ -22,19 +22,23 @@ Siirry backend-projektin juureen:
 
 1.1 Asenna riippuvuudet
 
-dotnet restore
+`dotnet restore`
 
 1.2 Aja tietokantamigraatiot
 
 LocalDB:lle:
 
-dotnet ef database update
+`dotnet ef database update`
 
 1.3 Käynnistä backend
 
-dotnet run
+`dotnet run`
 
 ### **2. Frontendin käynnistys**
 
 - siirry frontend-hakemistoon
 - aja komento `npm start`
+
+#### Muuta
+
+Taisinpa tehdä 1. kerran hieman yleiskäyttöisemmän dialogi-komponentin fronttiin.
