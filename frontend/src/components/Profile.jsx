@@ -9,6 +9,8 @@ const Profile = () => {
     const { useremail, token, logout } = useAuth();
     const [showDialog, setShowDialog] = React.useState(false);
     const [showOk, setShowOk] = React.useState(false);
+    const [showFail, setShowFail] = React.useState(false);
+    const [showError, setShowError] = React.useState(false);
     
     const handleOk = () => {
         setShowOk(false);
@@ -29,10 +31,10 @@ const Profile = () => {
                 setShowOk(true);
                 
             } else {
-                alert("Failed to delete account.");
+                setShowFail(true);
             }
         } catch (error) {
-            alert("Error deleting account.");
+            setShowError(true);
         }
     }
     
@@ -40,7 +42,9 @@ const Profile = () => {
         <>
             <Header />
             <div className="profile">
-            {showOk === true ? <Dialog title={"Account deleted"} ok="Ok" onConfirm={() => handleOk()} color="lightgreen" /> : null}
+            {showError === true ? <Dialog title="Error deleting account" ok="Ok" onConfirm={() => setShowError(false)} color="lightred" /> : null}
+            {showFail === true ? <Dialog title="Failed to delete account" ok="Ok" onConfirm={() => setShowFail(false)} color="lightred" /> : null}
+            {showOk === true ? <Dialog title="Account deleted" ok="Ok" onConfirm={() => handleOk()} color="lightgreen" /> : null}
             {showDialog === true ? <Dialog title="Are you sure?" ok="Yes" no="Cancel" onCancel={() => setShowDialog(false)} onConfirm={() => handleDeleteUser()} color="lightred" /> : null}
             {useremail === "" ? <><div>Please log in to view your profile.</div>
             </> :
