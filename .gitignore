@@ -1,0 +1,19 @@
+# .NET build directories
+bin/
+obj/
+
+# Visual Studio / VS Code
+.vscode/
+*.user
+*.suo
+
+# EF Core local DB files (just in case)
+*.mdf
+*.ldf
+
+# Logs
+*.log
+
+# Environment files
+.env
+.env.*
