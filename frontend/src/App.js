@@ -1,13 +1,11 @@
 import './App.css';
+import Header from './components/Header';
 
 function App() {
+  
   return (
     <div className="App">
-      <div className="navbar">
-        <a href="/">Home</a>
-        <a href="/login">Login</a>
-        <a href="/register">Register</a>
-      </div>
+      <Header />
       <h1>Welcome to the Auth API Minimal Frontend</h1>
     </div>
   );

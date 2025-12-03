@@ -1,4 +1,0 @@
-# Frontend
-
-Sovelluksen käyttöliittymä Reactilla
-

@@ -3,7 +3,64 @@
 }
 
 .navbar {
-  background-color: aliceblue;
+  background-color:cadetblue;
   padding: 10px;
-  
+  text-align: right;
+}
+
+a {
+  margin-right: 15px;
+}
+
+.login-form {
+  width: 15%;
+  margin:auto;
+}
+
+.form-group {
+  text-align: left;
+}
+
+input {
+  width: 100%;
+  padding-top: 0.2rem;
+  padding-bottom: 0.2rem;
+}
+
+.login-status {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin: auto;
+  width: 20%;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  border-color: #1a1a1a;
+  border-style: groove;
+  border-radius: 1em;
+}
+
+.column {
+  flex: 1;
+}
+
+/* Responsive Styling */
+@media (max-width: 768px) {
+    .login-status {
+        flex-direction: column; /* Stack columns on smaller screens */
+    }
+}
+
+.buttons {
+  padding-top: 0.4rem;
+  padding-bottom: 0.4rem;
+  padding-left: 0.8rem;
+  padding-right: 0.8rem;
+  color:whitesmoke;
+  background-color: blue;
+  margin-top: 0.5rem;
+}
+
+.login {
+  text-align: center;
 }
