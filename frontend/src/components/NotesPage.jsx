@@ -67,6 +67,7 @@ const NotesPage = () => {
     return (
         <>
             {showConfirmDelete.ok === true ? <Dialog title="Are you sure?" ok="Yes" no="Cancel" onCancel={() => setShowConfirmDelete({ok: false, id: undefined})} onConfirm={() => deleteNote(showConfirmDelete.id)} color="lightred" /> : null}
+            <div id='notes'>
             <h2>Notes:</h2>
             <div>
                 <form onSubmit={(e) => getNote(e)}>
@@ -87,6 +88,7 @@ const NotesPage = () => {
                 ))}
              </>
             }
+            </div>
         </>
     );
 }
