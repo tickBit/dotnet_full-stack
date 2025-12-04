@@ -115,8 +115,63 @@ app.MapDelete("/api/users/delete", [Authorize] async (AppDbContext db, HttpConte
     return Results.Ok("Account deleted successfully.");
 });
 
+app.MapPost("/api/info", [Authorize] async (AppDbContext db, HttpContext context, InfoDto dto) =>
+{
+    var userEmail = context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+    if (userEmail == null)
+        return Results.Unauthorized();
+
+    var user = await db.Users.FirstOrDefaultAsync(u => u.Email == userEmail);
+    if (user == null)
+        return Results.NotFound("User not found");
+
+    var info = new Info
+    {
+        Note = dto.Note,
+        UserId = user.Id
+    };
+
+    db.Infos.Add(info);
+    await db.SaveChangesAsync();
+
+    return Results.Ok(info);
+});
+
+app.MapGet("/api/info", [Authorize] async (AppDbContext db, HttpContext context) =>
+{
+    var userEmail = context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+    var user = await db.Users.FirstOrDefaultAsync(u => u.Email == userEmail);
+    if (user == null)
+        return Results.NotFound("User not found");
+
+    var notes = await db.Infos
+        .Where(i => i.UserId == user.Id)
+        .ToListAsync();
+
+    return Results.Ok(notes);
+});
+
+app.MapPut("/api/info/{id}", [Authorize] async (int id, AppDbContext db, HttpContext context, InfoDto dto) =>
+{
+    var userEmail = context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+    var user = await db.Users.FirstOrDefaultAsync(u => u.Email == userEmail);
+    if (user == null)
+        return Results.NotFound("User not found");
+
+    var info = await db.Infos.FirstOrDefaultAsync(i => i.Id == id && i.UserId == user.Id);
+    if (info == null)
+        return Results.NotFound("Note not found or does not belong to user");
+
+    info.Note = dto.Note;
+    await db.SaveChangesAsync();
+
+    return Results.Ok(info);
+});
 
 app.Run();
 
 public record RegisterRequest(string Email, string Password);
 public record LoginRequest(string Email, string Password);
+public record InfoDto(string Note);
