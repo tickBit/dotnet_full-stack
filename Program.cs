@@ -170,6 +170,25 @@ app.MapPut("/api/info/{id}", [Authorize] async (int id, AppDbContext db, HttpCon
     return Results.Ok(info);
 });
 
+// delete note
+app.MapDelete("/api/info/{id}", [Authorize] async (int id, AppDbContext db, HttpContext context) =>
+{
+    var userEmail = context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+    var user = await db.Users.FirstOrDefaultAsync(u => u.Email == userEmail);
+    if (user == null)
+        return Results.NotFound("User not found");
+
+    var info = await db.Infos.FirstOrDefaultAsync(i => i.Id == id && i.UserId == user.Id);
+    if (info == null)
+        return Results.NotFound("Note not found or does not belong to user");
+
+    db.Remove(info);
+    await db.SaveChangesAsync();
+
+    return Results.Ok();
+});
+
 app.Run();
 
 public record RegisterRequest(string Email, string Password);
