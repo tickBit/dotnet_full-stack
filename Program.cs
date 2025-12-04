@@ -94,7 +94,7 @@ app.MapPost("/api/users/login", async (AppDbContext db, JwtService jwt, LoginReq
 
 app.MapGet("/api/secret", [Authorize] () =>
 {
-    return Results.Ok("Tämä on salainen tieto vain kirjautuneille!");
+    return Results.Ok("This sentence is for signed-in users, like you, only");
 });
 
 app.MapDelete("/api/users/delete", [Authorize] async (AppDbContext db, HttpContext context) =>

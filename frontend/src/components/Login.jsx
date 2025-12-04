@@ -16,6 +16,9 @@ const Login = () => {
         if (useremail === "") {
             setStatus("Logged out.");
             setBackgroundColor("lightgrey");
+        } else {
+            setStatus("Logged in");
+            setBackgroundColor("lightgreen");
         }
     }, [useremail]);
        
@@ -53,7 +56,7 @@ const Login = () => {
             }
             
         } catch (error) {
-            setStatus(error.response ? error.response.data.detail : "Error.");
+            setStatus(error.response ? error.response.data : "Error.");
             setBackgroundColor("red");
         }
     }
@@ -87,7 +90,7 @@ const Login = () => {
                 <button type="submit" className="buttons">Login</button>
             </div>
             </form>
-            {useremail !== "" && <Link to="/">Go back to home to see what's new</Link>}
+            {useremail !== "" && <Link to="/">Go back to home page now</Link>}
             </div>
         </div>
         </>
