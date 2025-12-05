@@ -63,7 +63,7 @@ app.UseAuthorization();
 app.UseCors("AllowAll");
 
 // Routes
-app.MapPost("/api/users/register", async (AppDbContext db, RegisterRequest req) =>
+app.MapPost("/api/users/register", async (AppDbContext db, JwtService jwt, RegisterRequest req) =>
 {
     if (db.Users.Any(u => u.Email == req.Email))
         return Results.BadRequest("Email already registered");
@@ -77,7 +77,8 @@ app.MapPost("/api/users/register", async (AppDbContext db, RegisterRequest req) 
     db.Users.Add(user);
     await db.SaveChangesAsync();
 
-    return Results.Ok("User registered");
+    var token = jwt.GenerateToken(user);
+    return Results.Ok(new { token });
 });
 
 app.MapPost("/api/users/login", async (AppDbContext db, JwtService jwt, LoginRequest req) =>
@@ -140,11 +141,13 @@ app.MapGet("/api/info", [Authorize] async (AppDbContext db, HttpContext context)
     if (user == null)
         return Results.NotFound("User not found");
 
+    
     var notes = await db.Infos
-        .Where(i => i.UserId == user.Id)
-        .ToListAsync();
-
+            .Where(i => i.UserId == user.Id)
+            .ToListAsync();
+    
     return Results.Ok(notes);
+
 });
 
 app.MapPut("/api/info/{id}", [Authorize] async (int id, AppDbContext db, HttpContext context, InfoDto dto) =>

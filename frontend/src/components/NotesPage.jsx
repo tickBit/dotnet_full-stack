@@ -108,24 +108,27 @@ const NotesPage = () => {
         
         const fetchNotes = async () => {
             
-            axios.get(`http://localhost:5079/api/info`, {
+            await axios.get(`http://localhost:5079/api/info`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
                 }).then((response) => {
                     console.log(response);
-            
-                    if (response.data) {
+                    
+                    try {
                         setNotes(response.data)
-                    } else {
+                    } catch {
                         setNotes([]);
                     }
                     
                 }).catch((error) => {
+                    console.log(error);
                     setShowError(true);
+                    console.log(token)
                 })
             }
         
+        fetchNotes();
         
     }, [token, setNotes]);
     
@@ -135,8 +138,8 @@ const NotesPage = () => {
             {showError === true ? <Dialog title="Something went wrong.." ok="Ok" onConfirm={() => setShowError(false)} color="lightred" /> : null}
             {showConfirmDelete.ok === true ? <Dialog title="Are you sure?" ok="Yes" no="Cancel" onCancel={() => setShowConfirmDelete({ok: false, id: undefined})} onConfirm={() => deleteNote(showConfirmDelete.id)} color="lightred" /> : null}
             <div className='page'>
-            <h2>Notes:</h2>
-            <div>
+            <div style={{ textAlign: "center" }}>
+                <h2>Notes:</h2>
                 <form onSubmit={(e) => getNote(e)}>
                     <label htmlFor="new-note">Add new note: </label>
                     <input type="text" name="new-note" id="new-note" className='new-note-class' />
@@ -144,7 +147,7 @@ const NotesPage = () => {
                 </form>
             </div>
             <br />
-            
+            <div style={{ textAlign: "center"}}>
                 {notes.length === 0 ? <p>No notes yet.</p> : <> {
                     notes.map((n,i) => (
                     <div id={"a"+i} key={i}>
@@ -155,6 +158,7 @@ const NotesPage = () => {
                 ))}
              </>
             }
+            </div>
             </div>
         </>
     );
