@@ -106,7 +106,9 @@ const NotesPage = () => {
     // fetch new notes, when there is any
     useEffect(() => {
         
-        axios.get(`http://localhost:5079/api/info`, {
+        const fetchNotes = async () => {
+            
+            axios.get(`http://localhost:5079/api/info`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
@@ -122,7 +124,7 @@ const NotesPage = () => {
                 }).catch((error) => {
                     setShowError(true);
                 })
-        
+            }
         
         
     }, [token, setNotes]);
@@ -132,12 +134,12 @@ const NotesPage = () => {
         <>
             {showError === true ? <Dialog title="Something went wrong.." ok="Ok" onConfirm={() => setShowError(false)} color="lightred" /> : null}
             {showConfirmDelete.ok === true ? <Dialog title="Are you sure?" ok="Yes" no="Cancel" onCancel={() => setShowConfirmDelete({ok: false, id: undefined})} onConfirm={() => deleteNote(showConfirmDelete.id)} color="lightred" /> : null}
-            <div id='notes'>
+            <div className='page'>
             <h2>Notes:</h2>
             <div>
                 <form onSubmit={(e) => getNote(e)}>
                     <label htmlFor="new-note">Add new note: </label>
-                    <input type="text" name="new-note" id="new-note" className='new-note' />
+                    <input type="text" name="new-note" id="new-note" className='new-note-class' />
                     <button type="submit" className='buttons' style={{ backgroundColor: "red"}}>Save</button>
                 </form>
             </div>

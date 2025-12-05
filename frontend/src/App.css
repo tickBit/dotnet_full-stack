@@ -67,6 +67,9 @@ input {
   text-align: center;
 }
 
+.register {
+  text-align: center;
+}
 .profile {
   text-align: center;
 }
@@ -86,16 +89,18 @@ input {
   z-index: 2000;
 }
 
-.new-note {
+.new-note-class {
   width: 20em;
   margin-left: 7px;
   z-index: 0;
 }
 
-#notes {
+.page {
   display: inline-block;
+  width: 100%;
   z-index: 0;
   filter:blur(0px);
+  text-align: left;
 }
 
 .delete {
@@ -108,4 +113,8 @@ input {
 
 .edit-text {
   width: fit-content;
+}
+
+.password {
+  width: 100%;
 }

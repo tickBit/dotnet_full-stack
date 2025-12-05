@@ -81,11 +81,11 @@ const Login = () => {
             <div className="form-group">
                 <label>Email:</label>
                 <br/>
-                <input type="text" name="email" id="email" />
+                <input type="text" name="email" className="email" />
                 <br/>
                 <label>Password:</label>
                 <br/>
-                <input type="password" name="password" id="password" />
+                <input type="password" name="password" className="password" />
                 <br/>
                 <button type="submit" className="buttons">Login</button>
             </div>

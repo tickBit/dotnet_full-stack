@@ -1,17 +1,17 @@
 const Dialog = (props) => {
     
-    document.getElementById("notes").style.filter = "blur(3px)";
+    document.getElementsByClassName("page")[0].style.filter = "blur(3px)";
     
     const handleYes = () => {
-        document.getElementById("notes").style.filter = "blur(0px)";
+        document.getElementsByClassName("page")[0].style.filter = "blur(0px)";
         
         return props.onConfirm && props.onConfirm();
     }
     
     const handleNo = () => {
-        document.getElementById("notes").style.filter = "blur(0px)";
+        document.getElementsByClassName("page")[0].style.filter = "blur(0px)";
         
-        return props.onCancel && props.onCancel()
+        return props.onCancel && props.onCancel();
     }
     
     return (
