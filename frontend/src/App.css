@@ -97,3 +97,15 @@ input {
   z-index: 0;
   filter:blur(0px);
 }
+
+.delete {
+  cursor: pointer;
+}
+
+.edit {
+  cursor: pointer;
+}
+
+.edit-text {
+  width: fit-content;
+}
