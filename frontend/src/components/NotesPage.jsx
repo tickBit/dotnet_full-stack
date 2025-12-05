@@ -124,7 +124,6 @@ const NotesPage = () => {
                 }).catch((error) => {
                     console.log(error);
                     setShowError(true);
-                    console.log(token)
                 })
             }
         

@@ -3,7 +3,7 @@
 ## Tämä projekti sisältää
 
 - .NET 10 Minimal API backendin (C#)
-- React-frontendin
+- React frontendin
 - MS SQL Server -tietokannan (LocalDB)
 - JWT-autentikoinnin (login, register, protected routes)
 - Entity Framework Core -migrations
@@ -23,11 +23,13 @@ Siirry backend-projektin juureen:
 1.1 Asenna riippuvuudet
 
 `dotnet restore`
+`dotnet tool install --global dotnet-ef`
 
 1.2 Aja tietokantamigraatiot
 
 LocalDB:lle:
 
+`dotnet ef migrations add InitialCreate`
 `dotnet ef database update`
 
 1.3 Käynnistä backend
@@ -37,8 +39,14 @@ LocalDB:lle:
 ### **2. Frontendin käynnistys**
 
 - siirry frontend-hakemistoon
-- aja komento `npm start`
+- `npm install`
+- `npm start`
 
 #### Muuta
 
-Taisinpa tehdä 1. kerran hieman yleiskäyttöisemmän dialogi-komponentin fronttiin.
+Tarvitaan `.env`-tiedosto, jota ei luonnollisesti tule siällyttää GitHubiin. Ohessa esimerkkiarvot sovellusta varten:
+
+JWT_KEY=SUPER_SECRET_KEY_123_FOR_MY_AND_EVERYONE_ELSES_EYES_ONLY
+JWT_ISSUER=AuthApi
+JWT_AUDIENCE=AuthApi
+DEFAULT_CONNSTRING=Server=(localdb)\MSSQLLocalDB;Database=AuthApiDb;Trusted_Connection=True;
