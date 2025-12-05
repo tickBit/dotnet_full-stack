@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace AuthApiMinimal.Models;
 
 public class AppUser
@@ -7,5 +9,6 @@ public class AppUser
     public string PasswordHash { get; set; } = "";
 
     // Navigation collection
+    [JsonIgnore]
     public List<Info> Infos { get; set; } = new();
 }

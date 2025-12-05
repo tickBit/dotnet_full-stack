@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace AuthApiMinimal.Models
 {
     public class Info
@@ -10,6 +12,7 @@ namespace AuthApiMinimal.Models
         public int UserId { get; set; }
 
         // Navigation property
+        [JsonIgnore]
         public AppUser? User { get; set; }
     }
 }
