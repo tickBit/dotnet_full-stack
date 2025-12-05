@@ -10,7 +10,7 @@ function App() {
   return (
     <div className="App">
       <Header />
-      <h1>Welcome to the Auth API Minimal Frontend</h1>
+      <h1>Welcome to the full-stack Note taking demo</h1>
       {useremail !== "" ? <NotesPage /> :
        <p>Login to make notes to this page.</p>}
     </div>
