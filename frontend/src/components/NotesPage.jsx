@@ -96,7 +96,7 @@ const NotesPage = () => {
                 }  
             );
             
-            if (resp.status === 200) setNotes(prevNotes => [...prevNotes, resp.data]);
+            if (resp.status === 200) setNotes(prevNotes => [resp.data, ...prevNotes]);
                                     else setShowError(true);
         } catch(error) {
             setShowError(true);
@@ -116,7 +116,7 @@ const NotesPage = () => {
                     console.log(response);
                     
                     try {
-                        setNotes(response.data)
+                        setNotes(response.data.reverse());
                     } catch {
                         setNotes([]);
                     }
