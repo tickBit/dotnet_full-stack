@@ -1,5 +1,11 @@
 # Full-stack: React frontend & .NET backend
 
+Käyttäjiä voi rekisteröidä ja kirjata sisään. Kirjautunut käyttäjä voi kirjoittaa muistiinpanoja, uusin ilmestyy ensimmäisenä. Käyttäjä voi tuhota tilinsä.
+
+Muistiinpanoa voi muokata kaksoisklikkaamalla kynää. Muistiinpano tallennetaan painamalla sitten returnia. Jollei halua tallentaa muistiinpanoa, niin kaksoisklikkaamalla kynää uudelleen palaudutaan muokkaustilasta.
+
+Roskakoria kaksoisklikkaamalla voi poistaa muistiinpanon.
+
 ## Tämä projekti sisältää
 
 - .NET 10 Minimal API backendin (C#)

@@ -113,7 +113,6 @@ const NotesPage = () => {
                     Authorization: `Bearer ${token}`,
                 },
                 }).then((response) => {
-                    console.log(response);
                     
                     try {
                         setNotes(response.data.reverse());
