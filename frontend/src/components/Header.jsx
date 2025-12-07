@@ -11,12 +11,12 @@ const Header = () => {
             <Link to="/">Home</Link>
             {isLoggedIn === false ? <>
                      <Link to="/login">Login</Link>
+                     <Link to="/register">Register</Link>
                      </>
             : <>
                 <Link onClick={() => logout()}>Logout</Link>
                 </>
             }
-            <Link to="/register">Register</Link>
             <Link to="/profile">Profile</Link>
         </div>
     );
