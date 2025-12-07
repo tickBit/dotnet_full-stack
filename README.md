@@ -56,3 +56,8 @@ JWT_KEY=SUPER_SECRET_KEY_123_FOR_MY_AND_EVERYONE_ELSES_EYES_ONLY
 JWT_ISSUER=AuthApi
 JWT_AUDIENCE=AuthApi
 DEFAULT_CONNSTRING=Server=(localdb)\MSSQLLocalDB;Database=AuthApiDb;Trusted_Connection=True;
+
+#### Kuva
+
+![Notes](https://github.com/user-attachments/assets/562f5409-38b5-4490-9632-364c9a158b98)
+
