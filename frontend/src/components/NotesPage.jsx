@@ -30,9 +30,7 @@ const NotesPage = () => {
     }
     
     const editChange = (e) => {
-        
-        console.log(e);
-        
+                
         const  value = e.target.value;
         setEditedText(value);
 
@@ -98,6 +96,9 @@ const NotesPage = () => {
             
             if (resp.status === 200) setNotes(prevNotes => [resp.data, ...prevNotes]);
                                     else setShowError(true);
+                                    
+            document.getElementById("new-note").value="";
+            
         } catch(error) {
             setShowError(true);
         }
