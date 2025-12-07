@@ -53,9 +53,13 @@ LocalDB:lle:
 Tarvitaan `.env`-tiedosto, jota ei luonnollisesti tule siällyttää GitHubiin. Ohessa esimerkkiarvot sovellusta varten:
 
 JWT_KEY=SUPER_SECRET_KEY_123_FOR_MY_AND_EVERYONE_ELSES_EYES_ONLY
+
 JWT_ISSUER=AuthApi
+
 JWT_AUDIENCE=AuthApi
+
 DEFAULT_CONNSTRING=Server=(localdb)\MSSQLLocalDB;Database=AuthApiDb;Trusted_Connection=True;
+
 
 #### Kuva
 
