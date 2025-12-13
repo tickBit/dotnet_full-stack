@@ -52,7 +52,7 @@ LocalDB:lle:
 
 #### Muuta
 
-Tarvitaan `.env`-tiedosto, jota ei luonnollisesti tule siällyttää GitHubiin. Ohessa esimerkkiarvot sovellusta varten:
+Tarvitaan `.env`-tiedosto, jota ei luonnollisesti tule sisällyttää GitHubiin. Ohessa esimerkkiarvot sovellusta varten:
 
 JWT_KEY=SUPER_SECRET_KEY_123_FOR_MY_AND_EVERYONE_ELSES_EYES_ONLY
 
