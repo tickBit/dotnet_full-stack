@@ -6,6 +6,8 @@ Muistiinpanoa voi muokata kaksoisklikkaamalla kynää. Muistiinpano tallennetaan
 
 Roskakoria kaksoisklikkaamalla voi poistaa muistiinpanon.
 
+HUOM! Selaimen Local Storage on syytä tarvittaessa tyhjentää http://localhost:3000 kohdalta aluksi.
+
 ## Tämä projekti sisältää
 
 - .NET 10 Minimal API backendin (C#)
