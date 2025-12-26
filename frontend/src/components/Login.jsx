@@ -8,19 +8,26 @@ const Login = () => {
 
     const { useremail, login } = useAuth();    
     
+    const [waiting, setWaiting] = React.useState(false);
     const [status, setStatus] = React.useState("Waiting");
     const [backgroundColor, setBackgroundColor] = React.useState("lightgrey");
 
     useEffect(() => {
         
-        if (useremail === "") {
+        if (waiting) {
+            setStatus("Waiting for server...");
+            setBackgroundColor("orange");
+            return;
+        }
+        
+        if (useremail === "" && !waiting) {
             setStatus("Logged out.");
             setBackgroundColor("lightgrey");
         } else {
             setStatus("Logged in");
             setBackgroundColor("lightgreen");
         }
-    }, [useremail]);
+    }, [waiting, useremail]);
        
     const handleLogin = async (e) => {
         e.preventDefault();
@@ -31,8 +38,10 @@ const Login = () => {
         
         let resp;
         
+        // because there seems to be delay sometimes fetching from server,
+        // a waiting state is used to inform user
         try {
-            
+            setWaiting(true);
             resp = await axios.post("http://localhost:5079/api/users/login", {
                     email: email,
                     password: password
@@ -41,7 +50,9 @@ const Login = () => {
                     "Content-Type": "application/json"
                 }
             });
-        
+            
+            setWaiting(false);
+            
             const data = resp.data;
 
             if (data && data.token) {
