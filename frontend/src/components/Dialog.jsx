@@ -1,15 +1,18 @@
 const Dialog = (props) => {
     
     document.getElementsByClassName("page")[0].style.filter = "blur(3px)";
+    document.getElementsByClassName("page")[0].inert = true;
     
     const handleYes = () => {
         document.getElementsByClassName("page")[0].style.filter = "blur(0px)";
+        document.getElementsByClassName("page")[0].inert = false;
         
         return props.onConfirm && props.onConfirm();
     }
     
     const handleNo = () => {
         document.getElementsByClassName("page")[0].style.filter = "blur(0px)";
+        document.getElementsByClassName("page")[0].inert = false;
         
         return props.onCancel && props.onCancel();
     }

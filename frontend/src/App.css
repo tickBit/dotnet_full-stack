@@ -86,6 +86,7 @@ input {
   border-style: groove;
   border-radius: 5em;
   box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+  pointer-events: all;
   z-index: 2000;
 }
 
