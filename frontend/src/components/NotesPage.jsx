@@ -12,6 +12,7 @@ const NotesPage = () => {
     const [editedText, setEditedText] = React.useState("");
     const [editMode, setEditMode] = React.useState(false);
     const [originalTxt, setOriginalTxt] = React.useState("");
+    const [loading, setLoading] = React.useState(false);
     
     const { token } = useAuth();
     
@@ -109,6 +110,8 @@ const NotesPage = () => {
         
         const fetchNotes = async () => {
             
+            setLoading(true);
+            
             await axios.get(`http://localhost:5079/api/info`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -120,10 +123,12 @@ const NotesPage = () => {
                     } catch {
                         setNotes([]);
                     }
-                    
+            
+                    setLoading(false);        
                 }).catch((error) => {
                     console.log(error);
                     setShowError(true);
+                    setLoading(false);
                 })
             }
         
@@ -147,6 +152,8 @@ const NotesPage = () => {
             </div>
             <br />
             <div className='notes-container'>
+            {loading === true ? <p style={{ textAlign: "center"}}>Loading...</p> : <>
+             
                 {notes.length === 0 ? <p style={{ textAlign: "center"}}>No notes yet.</p> : <>
                     {
                     notes.map((n,i) => (
@@ -157,6 +164,8 @@ const NotesPage = () => {
                     </div>  
                 ))}
              </>
+            }
+            </>
             }
             </div>
             </div>
