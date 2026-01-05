@@ -2,9 +2,9 @@
 
 Käyttäjiä voi rekisteröidä ja kirjata sisään. Kirjautunut käyttäjä voi kirjoittaa muistiinpanoja, uusin ilmestyy ensimmäisenä. Käyttäjä voi tuhota tilinsä.
 
-Muistiinpanoa voi muokata kaksoisklikkaamalla kynää. Muistiinpano tallennetaan painamalla sitten returnia. Jollei halua tallentaa muistiinpanoa, niin kaksoisklikkaamalla kynää uudelleen palaudutaan muokkaustilasta.
+Muistiinpanoa voi muokata klikkaamalla kynää. Muistiinpano tallennetaan painamalla sitten returnia. Jollei halua tallentaa muistiinpanoa, niin klikkaamalla kynää uudelleen palaudutaan muokkaustilasta.
 
-Roskakoria kaksoisklikkaamalla voi poistaa muistiinpanon.
+Roskakoria klikkaamalla voi poistaa muistiinpanon.
 
 HUOM! Selaimen Local Storage on syytä tarvittaessa tyhjentää `http://localhost:3000` kohdalta aluksi.
 
