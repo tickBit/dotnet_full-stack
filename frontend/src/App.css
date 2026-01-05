@@ -106,14 +106,16 @@ input {
 
 .delete {
   cursor: pointer;
+  text-align: right;
 }
 
 .edit {
   cursor: pointer;
+  text-align: right;
 }
 
 .edit-text {
-  width: fit-content;
+  width: 75%;
 }
 
 .password {
@@ -121,10 +123,11 @@ input {
 }
 
 .notes-container {
-  width: 25%;
-  justify-content: space-between;
+  width: 25em;
   margin: auto;
-  text-align: right;
-  background-color:papayawhip;
+  text-align: left;
 }
 
+.icon {
+  float: right;
+}

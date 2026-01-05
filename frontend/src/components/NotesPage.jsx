@@ -11,19 +11,16 @@ const NotesPage = () => {
     const [editLine, setEditLine] = React.useState(undefined);
     const [editedText, setEditedText] = React.useState("");
     const [editMode, setEditMode] = React.useState(false);
-    const [originalTxt, setOriginalTxt] = React.useState("");
     const [loading, setLoading] = React.useState(false);
     
     const { token } = useAuth();
     
     const handleSetLine = (id, text) => {
-        
-        setOriginalTxt(text);
-                
+                        
         setEditLine(id);
         setEditMode(!editMode);
         
-        setEditedText(originalTxt);
+        setEditedText(text);
         
         if (editMode === false) {
             setEditLine(undefined);
@@ -32,7 +29,7 @@ const NotesPage = () => {
     
     const editChange = (e) => {
                 
-        const  value = e.target.value;
+        const value = e.target.value;
         setEditedText(value);
 
     };
@@ -52,6 +49,7 @@ const NotesPage = () => {
                 
                 setEditMode(false);
                 setEditLine(undefined);
+                setEditedText("");
                 
                 setNotes(notes.map((n) => (n.id === id) ? resp.data : n));
                 
@@ -73,7 +71,7 @@ const NotesPage = () => {
             }
             });
                         
-            if (resp.status === 200) setNotes(notes.filter((n) => (n.id !== id)));
+            if (resp.status === 200) setNotes(notes.filter((n) => (n.id !== id)).reverse());
                                      else setShowError(true);
         } catch (error) {
             setShowError(true);
@@ -119,7 +117,7 @@ const NotesPage = () => {
                 }).then((response) => {
                     
                     try {
-                        setNotes(response.data.reverse());
+                        setNotes(response.data);
                     } catch {
                         setNotes([]);
                     }
@@ -157,10 +155,12 @@ const NotesPage = () => {
                 {notes.length === 0 ? <p style={{ textAlign: "center"}}>No notes yet.</p> : <>
                     {
                     notes.map((n,i) => (
-                    <div id={"a"+i} key={i}>
-                    {editLine === i ? <> <input type="text" value={editedText} onKeyUp={(e) => handleUpdate(e, n.id)} onChange={(e) => editChange(e)} className='edit-text' id="edit-text" /> </> : <> {n.note} </> }
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" onClick={() => handleSetLine(i, n.note)} className='edit'><path fill="currentColor" d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83l3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75z" /></svg>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" onClick={() => setShowConfirmDelete({ok: true, id: n.id})} className='delete'><path fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="m18 9l-.84 8.398c-.127 1.273-.19 1.909-.48 2.39a2.5 2.5 0 0 1-1.075.973C15.098 21 14.46 21 13.18 21h-2.36c-1.279 0-1.918 0-2.425-.24a2.5 2.5 0 0 1-1.076-.973c-.288-.48-.352-1.116-.48-2.389L6 9m7.5 6.5v-5m-3 5v-5m-6-4h4.615m0 0l.386-2.672c.112-.486.516-.828.98-.828h3.038c.464 0 .867.342.98.828l.386 2.672m-5.77 0h5.77m0 0H19.5" /></svg>
+                    <div id={"a"+i} key={i} style={{ alignItems: "start", border: "1px solid black", borderRadius: "5px", padding: "10px", marginBottom: "10px", backgroundColor: "#f0f0f0"}}>    
+                            {editLine === n.id ? <> <input type="text" value={editedText} onKeyUp={(e) => handleUpdate(e, n.id)} onChange={(e) => editChange(e)} className='edit-text' id="edit-text" /> </> : <> {n.note} </> }
+                            <div style={{ textAlign: "right" }}>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" onClick={() => { handleSetLine(n.id, n.note); }} className='edit'><path fill="currentColor" d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83l3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75z" /></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" onClick={() => setShowConfirmDelete({ok: true, id: n.id})} className='delete'><path fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="m18 9l-.84 8.398c-.127 1.273-.19 1.909-.48 2.39a2.5 2.5 0 0 1-1.075.973C15.098 21 14.46 21 13.18 21h-2.36c-1.279 0-1.918 0-2.425-.24a2.5 2.5 0 0 1-1.076-.973c-.288-.48-.352-1.116-.48-2.389L6 9m7.5 6.5v-5m-3 5v-5m-6-4h4.615m0 0l.386-2.672c.112-.486.516-.828.98-.828h3.038c.464 0 .867.342.98.828l.386 2.672m-5.77 0h5.77m0 0H19.5" /></svg>
+                            </div>
                     </div>  
                 ))}
              </>
