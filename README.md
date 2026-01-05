@@ -33,9 +33,7 @@ Siirry backend-projektin juureen:
 `dotnet restore`
 `dotnet tool install --global dotnet-ef`
 
-1.2 Aja tietokantamigraatiot
-
-LocalDB:lle:
+1.2 Aja tietokantamigraatiot LocalDB:lle:
 
 `dotnet ef migrations add InitialCreate`
 `dotnet ef database update`
@@ -65,5 +63,6 @@ DEFAULT_CONNSTRING=Server=(localdb)\MSSQLLocalDB;Database=AuthApiDb;Trusted_Conn
 
 #### Kuva
 
-![Notes](https://github.com/user-attachments/assets/562f5409-38b5-4490-9632-364c9a158b98)
+![Notes-demo](https://github.com/user-attachments/assets/39622a37-e395-4953-a00d-e7f88d52038f)
+
 
