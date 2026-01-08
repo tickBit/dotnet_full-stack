@@ -6,6 +6,8 @@ Muistiinpanoa voi muokata klikkaamalla kynää. Muistiinpano tallennetaan painam
 
 Roskakoria klikkaamalla voi poistaa muistiinpanon.
 
+Sovelluksessa on sivutus (engl. pagination).
+
 HUOM! Selaimen Local Storage on syytä tarvittaessa tyhjentää `http://localhost:3000` kohdalta aluksi.
 
 ## Tämä projekti sisältää
