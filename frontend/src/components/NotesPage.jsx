@@ -5,7 +5,10 @@ import Dialog from './Dialog';
 
 const NotesPage = () => {
     
-    const [notes, setNotes] = React.useState([]);
+    const [totalCount, setTotalCount] = React.useState(0);
+    const [pageSize, setPageSize] = React.useState(4);
+    const [currentFour, setCurrentFour] = React.useState([]);
+    const [page, setPage] = React.useState(1);
     const [showConfirmDelete, setShowConfirmDelete] = React.useState({ok: false, id: undefined});
     const [showError, setShowError] = React.useState(false);
     const [editLine, setEditLine] = React.useState(undefined);
@@ -50,8 +53,7 @@ const NotesPage = () => {
                 setEditMode(false);
                 setEditLine(undefined);
                 setEditedText("");
-                
-                setNotes(notes.map((n) => (n.id === id) ? resp.data : n));
+                setCurrentFour(currentFour.map((n) => (n.id === id) ? resp.data : n));
                 
                 
             } catch(error) {
@@ -71,8 +73,9 @@ const NotesPage = () => {
             }
             });
                         
-            if (resp.status === 200) setNotes(notes.filter((n) => (n.id !== id)).reverse());
-                                     else setShowError(true);
+            if (resp.status === 200) setCurrentFour(currentFour.filter((n) => (n.id !== id)).reverse());
+            else setShowError(true);
+            
         } catch (error) {
             setShowError(true);
         }
@@ -93,8 +96,11 @@ const NotesPage = () => {
                 }  
             );
             
-            if (resp.status === 200) setNotes(prevNotes => [resp.data.items, ...prevNotes]);
-                                    else setShowError(true);
+            if (resp.status === 200) {
+                setCurrentFour(prevCurrentFour => [resp.data, ...prevCurrentFour]);
+                setTotalCount(totalCount + 1);
+            }
+            else setShowError(true);
                                     
             document.getElementById("new-note").value="";
             
@@ -110,15 +116,18 @@ const NotesPage = () => {
             
             setLoading(true);
                         
-            await axios.get("http://localhost:5079/api/info?page=1&pageSize=4", {
-                    headers: { Authorization: `Bearer ${token}` }
+            await axios.get("http://localhost:5079/api/info", {
+                    headers: { Authorization: `Bearer ${token}` },
+                    params: { page: page, pageSize: pageSize }
 
                 }).then((response) => {
-                    
+                    console.log(response.data);
                     try {
-                        setNotes(response.data.items);
+                        setCurrentFour(response.data.items);
+                        setTotalCount(response.data.totalCount);
                     } catch {
-                        setNotes([]);
+                        setCurrentFour([]);
+                        setTotalCount(0);
                     }
             
                     setLoading(false);        
@@ -131,7 +140,7 @@ const NotesPage = () => {
         
         fetchNotes();
         
-    }, [token, setNotes]);
+    }, [token, page, pageSize, currentFour.items]);
     
     
     return (
@@ -150,21 +159,31 @@ const NotesPage = () => {
             <br />
             <div className='notes-container'>
             {loading === true ? <> <p style={{ textAlign: "center"}}>Loading...</p></> : <>
-                {notes.length === 0 ? <p style={{ textAlign: "center"}}>No notes yet.</p> : <>
+                {currentFour.length === 0 ? <p style={{ textAlign: "center"}}>No notes yet.</p> : <>
                     {
-                    notes.map((n,i) => (
-                    <div id={"a"+i} key={i} style={{ alignItems: "start", border: "1px solid black", borderRadius: "5px", padding: "10px", marginBottom: "10px", backgroundColor: "#f0f0f0"}}>    
-                            {editLine === n.id ? <> <input type="text" value={editedText} onKeyUp={(e) => handleUpdate(e, n.id)} onChange={(e) => editChange(e)} className='edit-text' id="edit-text" /> </> : <> {n.note} </> }
+                    currentFour.map((item,i) => (
+                    <div id={"a"+item.id} key={i} style={{ alignItems: "start", border: "1px solid black", borderRadius: "5px", padding: "10px", marginBottom: "10px", backgroundColor: "#f0f0f0"}}>    
+                            {editLine === item.id ? <> <input type="text" value={editedText} onKeyUp={(e) => handleUpdate(e, item.id)} onChange={(e) => editChange(e)} className='edit-text' id="edit-text" /> </> : <> {item.note} </> }
                             <div style={{ textAlign: "right" }}>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" onClick={() => { handleSetLine(n.id, n.note); }} className='edit'><path fill="currentColor" d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83l3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75z" /></svg>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" onClick={() => setShowConfirmDelete({ok: true, id: n.id})} className='delete'><path fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="m18 9l-.84 8.398c-.127 1.273-.19 1.909-.48 2.39a2.5 2.5 0 0 1-1.075.973C15.098 21 14.46 21 13.18 21h-2.36c-1.279 0-1.918 0-2.425-.24a2.5 2.5 0 0 1-1.076-.973c-.288-.48-.352-1.116-.48-2.389L6 9m7.5 6.5v-5m-3 5v-5m-6-4h4.615m0 0l.386-2.672c.112-.486.516-.828.98-.828h3.038c.464 0 .867.342.98.828l.386 2.672m-5.77 0h5.77m0 0H19.5" /></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" onClick={() => { handleSetLine(item.id, item.note); }} className='edit'><path fill="currentColor" d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83l3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75z" /></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" onClick={() => setShowConfirmDelete({ok: true, id: item.id})} className='delete'><path fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="m18 9l-.84 8.398c-.127 1.273-.19 1.909-.48 2.39a2.5 2.5 0 0 1-1.075.973C15.098 21 14.46 21 13.18 21h-2.36c-1.279 0-1.918 0-2.425-.24a2.5 2.5 0 0 1-1.076-.973c-.288-.48-.352-1.116-.48-2.389L6 9m7.5 6.5v-5m-3 5v-5m-6-4h4.615m0 0l.386-2.672c.112-.486.516-.828.98-.828h3.038c.464 0 .867.342.98.828l.386 2.672m-5.77 0h5.77m0 0H19.5" /></svg>
                             </div>
                     </div>  
                 ))}
-             </>
-            }
-            </>
-            }
+                {totalCount > page * pageSize ?
+                 <>
+                    { page > 1 ? <button className='buttons' style={{ backgroundColor: "blue", marginTop: "10px", marginLeft: "10px"}} onClick={() => { page > 0 ? setPage(page - 1) : setPage(1); }}>Show 4 previous</button>  : null }
+                    <button className='buttons' style={{ backgroundColor: "blue", marginTop: "10px"}} onClick={() => setPage(page + 1)}>Load more</button>
+                 </>
+                : totalCount - page * pageSize < 4 ?
+                    <>
+                    <button className='buttons' style={{ backgroundColor: "blue", marginTop: "10px", marginLeft: "10px"}} onClick={() => { page > 0 ? setPage(page - 1) : setPage(1); }}>Show 4 previous</button>
+                    </>
+                    : null
+                }
+                
+            
+                </>}</>}
             </div>
             </div>
         </>
