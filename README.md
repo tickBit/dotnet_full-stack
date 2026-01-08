@@ -65,6 +65,7 @@ DEFAULT_CONNSTRING=Server=(localdb)\MSSQLLocalDB;Database=AuthApiDb;Trusted_Conn
 
 #### Kuva
 
-![Notes-demo](https://github.com/user-attachments/assets/39622a37-e395-4953-a00d-e7f88d52038f)
+![Notes-demo](https://github.com/user-attachments/assets/8867d172-f2ec-4056-91e4-43cf992fe195)
+
 
 
