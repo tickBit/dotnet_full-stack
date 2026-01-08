@@ -105,6 +105,7 @@ const NotesPage = () => {
             );
             
             if (resp.status === 200) {
+                setPage(1);
                 setCurrentFour([resp.data, ...currentFour.slice(0,3)]);
                 setTotalCount(totalCount + 1);
             }
