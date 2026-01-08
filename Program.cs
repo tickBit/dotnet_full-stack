@@ -144,20 +144,31 @@ app.MapPost("/api/info", [Authorize] async (AppDbContext db, HttpContext context
     return Results.Ok(info);
 });
 
-app.MapGet("/api/info", [Authorize] async (AppDbContext db, HttpContext context) =>
+app.MapGet("/api/info", [Authorize] async (AppDbContext db, HttpContext context, GetInfosRequest infosRequest) =>
 {
     var userEmail = context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
+    // the page we're on, first page is 1 (not 0)
+    int page = infosRequest.Page < 1 ? 1 : infosRequest.Page;
+    
+    // how many items per page
+    int pageSize = infosRequest.PageSize < 1 ? 4 : infosRequest.PageSize;
+    
+    var query = db.Infos.AsQueryable();
+    var totalCount = await query.CountAsync();
+    
     var user = await db.Users.FirstOrDefaultAsync(u => u.Email == userEmail);
+    
     if (user == null)
         return Results.NotFound("User not found");
 
+    var items = await query
+        .Skip((page - 1) * pageSize)
+        .Take(pageSize)
+        .Where(i => i.UserId == user.Id)
+        .ToListAsync();
     
-    var notes = await db.Infos
-            .Where(i => i.UserId == user.Id)
-            .ToListAsync();
-    
-    return Results.Ok(notes);
+    return Results.Ok(items);
 
 });
 
@@ -203,3 +214,5 @@ app.Run();
 public record RegisterRequest(string Email, string Password);
 public record LoginRequest(string Email, string Password);
 public record InfoDto(string Note);
+
+public record GetInfosRequest(int Page, int PageSize);
