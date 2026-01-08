@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Mvc;
 
 // DotNetEnv lataa .env-tiedoston (jos käytät)
 DotNetEnv.Env.Load();
@@ -24,17 +25,6 @@ var jwtAudience = Environment.GetEnvironmentVariable("JWT_AUDIENCE") ?? "AuthApi
 // Palvelut
 builder.Services.AddDbContext<AppDbContext>(opts =>
     opts.UseSqlServer(connString));
-
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy(name: "AllowAll",
-                      policy  =>
-                      {
-                          policy.AllowAnyOrigin()
-                            .AllowAnyMethod()
-                            .AllowAnyHeader();
-                      });
-});
 
 builder.Services.AddScoped<JwtService>();
 
@@ -57,21 +47,21 @@ builder.Services.AddAuthorization();
 var myAllowSpecificOrigins = "_myAllowSpecificOrigins";
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy(name: myAllowSpecificOrigins,
-                      builder =>
-                      {
-                          builder.WithOrigins("http://localhost:3000")
-                                 .AllowAnyHeader()
-                                 .AllowAnyMethod();
-                      });
+    options.AddPolicy(myAllowSpecificOrigins, policy =>
+    {
+        policy
+            .WithOrigins("http://localhost:3000")
+            .AllowAnyMethod()
+            .AllowAnyHeader();
+    });
 });
 
 var app = builder.Build();
 
+app.UseCors(myAllowSpecificOrigins);
+
 app.UseAuthentication();
 app.UseAuthorization();
-
-app.UseCors(myAllowSpecificOrigins);
 
 // Routes
 app.MapPost("/api/users/register", async (AppDbContext db, JwtService jwt, RegisterRequest req) =>
@@ -144,33 +134,38 @@ app.MapPost("/api/info", [Authorize] async (AppDbContext db, HttpContext context
     return Results.Ok(info);
 });
 
-app.MapGet("/api/info", [Authorize] async (AppDbContext db, HttpContext context, GetInfosRequest infosRequest) =>
+
+app.MapGet("/api/info", [Authorize] async (AppDbContext db, HttpContext context, int page = 1, int pageSize = 4) =>
 {
+    if (page < 1) page = 1;
+    if (pageSize < 1) pageSize = 4;
+    
     var userEmail = context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-    // the page we're on, first page is 1 (not 0)
-    int page = infosRequest.Page < 1 ? 1 : infosRequest.Page;
-    
-    // how many items per page
-    int pageSize = infosRequest.PageSize < 1 ? 4 : infosRequest.PageSize;
-    
-    var query = db.Infos.AsQueryable();
-    var totalCount = await query.CountAsync();
-    
     var user = await db.Users.FirstOrDefaultAsync(u => u.Email == userEmail);
-    
     if (user == null)
         return Results.NotFound("User not found");
 
-    var items = await query
+    var totalCount = await db.Infos
+        .Where(i => i.UserId == user.Id)
+        .CountAsync();
+
+    var items = await db.Infos
+        .Where(i => i.UserId == user.Id)
+        .OrderBy(i => i.Id)
         .Skip((page - 1) * pageSize)
         .Take(pageSize)
-        .Where(i => i.UserId == user.Id)
         .ToListAsync();
-    
-    return Results.Ok(items);
 
+    return Results.Ok(new
+    {
+        TotalCount = totalCount,
+        Page = page,
+        PageSize = pageSize,
+        Items = items
+    });
 });
+
 
 app.MapPut("/api/info/{id}", [Authorize] async (int id, AppDbContext db, HttpContext context, InfoDto dto) =>
 {
@@ -214,5 +209,3 @@ app.Run();
 public record RegisterRequest(string Email, string Password);
 public record LoginRequest(string Email, string Password);
 public record InfoDto(string Note);
-
-public record GetInfosRequest(int Page, int PageSize);

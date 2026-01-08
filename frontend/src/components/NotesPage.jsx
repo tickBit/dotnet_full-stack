@@ -93,7 +93,7 @@ const NotesPage = () => {
                 }  
             );
             
-            if (resp.status === 200) setNotes(prevNotes => [resp.data, ...prevNotes]);
+            if (resp.status === 200) setNotes(prevNotes => [resp.data.items, ...prevNotes]);
                                     else setShowError(true);
                                     
             document.getElementById("new-note").value="";
@@ -109,15 +109,14 @@ const NotesPage = () => {
         const fetchNotes = async () => {
             
             setLoading(true);
-            
-            await axios.get(`http://localhost:5079/api/info`, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
+                        
+            await axios.get("http://localhost:5079/api/info?page=1&pageSize=4", {
+                    headers: { Authorization: `Bearer ${token}` }
+
                 }).then((response) => {
                     
                     try {
-                        setNotes(response.data);
+                        setNotes(response.data.items);
                     } catch {
                         setNotes([]);
                     }
@@ -150,8 +149,7 @@ const NotesPage = () => {
             </div>
             <br />
             <div className='notes-container'>
-            {loading === true ? <p style={{ textAlign: "center"}}>Loading...</p> : <>
-             
+            {loading === true ? <> <p style={{ textAlign: "center"}}>Loading...</p></> : <>
                 {notes.length === 0 ? <p style={{ textAlign: "center"}}>No notes yet.</p> : <>
                     {
                     notes.map((n,i) => (
