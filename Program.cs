@@ -152,10 +152,11 @@ app.MapGet("/api/info", [Authorize] async (AppDbContext db, HttpContext context,
 
     var items = await db.Infos
         .Where(i => i.UserId == user.Id)
-        .OrderBy(i => i.Id)
+        .OrderByDescending(i => i.Id) // vaihtoehtoisesti voisi käyttää jonkinlaista createdAt-arvoa...
         .Skip((page - 1) * pageSize)
         .Take(pageSize)
         .ToListAsync();
+
 
     return Results.Ok(new
     {

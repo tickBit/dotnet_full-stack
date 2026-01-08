@@ -15,7 +15,11 @@ const NotesPage = () => {
     const [editedText, setEditedText] = React.useState("");
     const [editMode, setEditMode] = React.useState(false);
     const [loading, setLoading] = React.useState(false);
+    const [hasPrev, setHasPrev] = React.useState(false);
+    const [hasNext, setHasNext] = React.useState(false);
     
+    const totalPages = Math.ceil(totalCount / pageSize);
+
     const { token } = useAuth();
     
     const handleSetLine = (id, text) => {
@@ -73,7 +77,11 @@ const NotesPage = () => {
             }
             });
                         
-            if (resp.status === 200) setCurrentFour(currentFour.filter((n) => (n.id !== id)).reverse());
+            if (resp.status === 200) {
+                setCurrentFour(currentFour.filter((n) => (n.id !== id)));
+            
+                setTotalCount(totalCount - 1);
+            }
             else setShowError(true);
             
         } catch (error) {
@@ -97,7 +105,7 @@ const NotesPage = () => {
             );
             
             if (resp.status === 200) {
-                setCurrentFour(prevCurrentFour => [resp.data, ...prevCurrentFour]);
+                setCurrentFour([resp.data, ...currentFour.slice(0,3)]);
                 setTotalCount(totalCount + 1);
             }
             else setShowError(true);
@@ -112,19 +120,24 @@ const NotesPage = () => {
     // fetch new notes, when there is any
     useEffect(() => {
         
+        if (page < totalPages) setHasNext(true); else setHasNext(false);
+        if (page > 1) setHasPrev(true); else setHasPrev(false);
+    
         const fetchNotes = async () => {
             
             setLoading(true);
-                        
+            
             await axios.get("http://localhost:5079/api/info", {
                     headers: { Authorization: `Bearer ${token}` },
                     params: { page: page, pageSize: pageSize }
 
                 }).then((response) => {
-                    console.log(response.data);
                     try {
                         setCurrentFour(response.data.items);
+                        
                         setTotalCount(response.data.totalCount);
+                        
+                    
                     } catch {
                         setCurrentFour([]);
                         setTotalCount(0);
@@ -140,7 +153,7 @@ const NotesPage = () => {
         
         fetchNotes();
         
-    }, [token, page, pageSize, currentFour.items]);
+    }, [token, currentFour.items, page, pageSize, totalCount, totalPages]);
     
     
     return (
@@ -170,17 +183,10 @@ const NotesPage = () => {
                             </div>
                     </div>  
                 ))}
-                {totalCount > page * pageSize ?
-                 <>
-                    { page > 1 ? <button className='buttons' style={{ backgroundColor: "blue", marginTop: "10px", marginLeft: "10px"}} onClick={() => { page > 0 ? setPage(page - 1) : setPage(1); }}>Show 4 previous</button>  : null }
-                    <button className='buttons' style={{ backgroundColor: "blue", marginTop: "10px"}} onClick={() => setPage(page + 1)}>Load more</button>
-                 </>
-                : totalCount - page * pageSize < 4 ?
-                    <>
-                    <button className='buttons' style={{ backgroundColor: "blue", marginTop: "10px", marginLeft: "10px"}} onClick={() => { page > 0 ? setPage(page - 1) : setPage(1); }}>Show 4 previous</button>
-                    </>
-                    : null
-                }
+                
+                 
+                { hasPrev ? <button className='buttons' style={{ backgroundColor: "blue", marginTop: "10px", marginLeft: "10px"}} onClick={() => { setPage(page - 1) }}>Show 4 previous</button>  : null }
+                { hasNext ? <button className='buttons' style={{ backgroundColor: "blue", marginTop: "10px"}} onClick={() => { setPage(page + 1) }} >Load more</button> : null }
                 
             
                 </>}</>}
