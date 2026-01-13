@@ -1,9 +1,11 @@
-import { Link } from 'react-router';
+import { Link, useLocation } from 'react-router';
 import { useAuth } from '../contexts/AuthContext';
 import { useEffect, useState, useRef } from 'react';
 
 const Header = () => {
 
+    const location = useLocation();
+    
     // navRef is null, before render
     const navRef = useRef(null);
     const { isLoggedIn, logout } = useAuth();
@@ -42,8 +44,10 @@ const Header = () => {
                 {open && <>
                 <nav className='menu'>
                 <ul>
+                    {location.pathname !== "/profile" && (
                     <li><Link to="/profile">Profile</Link></li>
-                    <li><Link onClick={() => logout()}>Logout</Link></li>
+                    )}
+                    <li><Link onClick={logout}>Logout</Link></li>
                 </ul>
                 </nav>
                 </>
