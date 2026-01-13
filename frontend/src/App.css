@@ -1,12 +1,17 @@
 .App {
+  position: relative;
   text-align: center;
+  z-index: 0;
 }
 
 .navbar {
+  position: relative;
+  width: 100%;
   background-color:cadetblue;
   padding: 10px;
   text-align: right;
   box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+  z-index: 0;
 }
 
 a {
@@ -39,6 +44,22 @@ input {
   border-color: #1a1a1a;
   border-style: groove;
   border-radius: 1em;
+}
+
+.menu {
+  position: absolute;
+  width: 10%;
+  background-color: whitesmoke;
+  color: black;
+  margin-top: 7px;
+  left: 90%;
+  text-align: left;
+  z-index: 2;
+}
+
+li {
+  list-style-type: none;
+  cursor: pointer;
 }
 
 .column {
