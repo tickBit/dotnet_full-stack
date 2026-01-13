@@ -1,34 +1,44 @@
 import { Link } from 'react-router';
 import { useAuth } from '../contexts/AuthContext';
-import React from 'react';
+import { useEffect, useState, useRef } from 'react';
 
 const Header = () => {
 
-    
+    // navRef is null, before render
+    const navRef = useRef(null);
     const { isLoggedIn, logout } = useAuth();
     
-    const [open, setOpen] = React.useState(false);
+    const [open, setOpen] = useState(false);
     
-    // if clicked outside navbar in the app's window, hide menu items
-    try {
-        window.document.getElementsByClassName("page")[0].addEventListener("click", function(e) {
-            if (open) setOpen(false);
-        });
-    }
-    catch(err) {
-        // catch error, if the "page" class isn't rendered yet...  
-    }
-    
+    useEffect(() => {
+        
+        function handleClickOutside(event) {
+            if (navRef.current && !navRef.current.contains(event.target)) {
+                setOpen(false);
+            }
+        }
+
+        if (open) {
+            document.addEventListener("mousedown", handleClickOutside);
+        }
+
+        // "cleanup"
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+        
+    }, [open]);
+                          
     return (
         <>
-        <nav className="navbar">
+        <nav className="navbar" ref={navRef}>
             <Link to="/">Home</Link>
             {isLoggedIn === false ? <>
                      <Link to="/login">Login</Link>
                      <Link to="/register">Register</Link>
                      </>
             : <>
-                <Link onClick={() => setOpen( () => setOpen(!open) ) }>My account</Link>
+                <Link onClick={() => setOpen( !open ) }>My account</Link>
                 {open && <>
                 <nav className='menu'>
                 <ul>
