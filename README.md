@@ -8,6 +8,8 @@ Roskakoria klikkaamalla voi poistaa muistiinpanon.
 
 Sovelluksessa on sivutus (engl. pagination).
 
+"My Account":ia klikkaamalla kirjautuneena tulee menu, jossa "Profile" ja "Logout".
+
 HUOM! Selaimen Local Storage on syytä tarvittaessa tyhjentää `http://localhost:3000` kohdalta aluksi.
 
 ## Tämä projekti sisältää
@@ -65,7 +67,9 @@ DEFAULT_CONNSTRING=Server=(localdb)\MSSQLLocalDB;Database=AuthApiDb;Trusted_Conn
 
 #### Kuva
 
-![Notes-demo](https://github.com/user-attachments/assets/8867d172-f2ec-4056-91e4-43cf992fe195)
+![Notes-demo](https://github.com/user-attachments/assets/3cb63895-fbad-42d3-b642-40e45718c3b3)
+
+Menu klikattu näkyviin.
 
 
 
