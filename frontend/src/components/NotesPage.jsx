@@ -20,7 +20,7 @@ const NotesPage = () => {
     
     const totalPages = Math.ceil(totalCount / pageSize);
 
-    const { token } = useAuth();
+    const { token, logout } = useAuth();
     
     const handleSetLine = (id, text) => {
                         
@@ -54,6 +54,11 @@ const NotesPage = () => {
                         "Content-Type": "application/json"
                     }});
                 
+                if (resp.status === 401) {
+                    logout();
+                    return;
+                }
+                
                 setEditMode(false);
                 setEditLine(undefined);
                 setEditedText("");
@@ -76,7 +81,12 @@ const NotesPage = () => {
                 Authorization: `Bearer ${token}`
             }
             });
-                        
+            
+            if (resp.status === 401) {
+                logout();
+                return;
+            }
+            
             if (resp.status === 200) {
                 setCurrentFour(currentFour.filter((n) => (n.id !== id)));
             
@@ -103,6 +113,11 @@ const NotesPage = () => {
                     }
                 }  
             );
+            
+            if (resp.status === 401) {
+                logout();
+                return;
+            }
             
             if (resp.status === 200) {
                 setPage(1);
@@ -134,6 +149,12 @@ const NotesPage = () => {
 
                 }).then((response) => {
                     try {
+                        
+                        if (response.status === 401) {
+                            logout();
+                            return;
+                        }
+                        
                         setCurrentFour(response.data.items);
                         
                         setTotalCount(response.data.totalCount);
@@ -154,7 +175,7 @@ const NotesPage = () => {
         
         fetchNotes();
         
-    }, [token, currentFour.items, page, pageSize, totalCount, totalPages]);
+    }, [token, currentFour.items, page, pageSize, totalCount, totalPages, logout]);
     
     
     return (
