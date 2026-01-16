@@ -10,6 +10,8 @@ Sovelluksessa on sivutus (engl. pagination).
 
 "My Account":ia klikkaamalla kirjautuneena tulee menu, jossa "Profile" ja "Logout".
 
+16.1.2026 alkaen token kestää yhden tunnin, minkä jälkeen käyttäjä kirjataan ulos.
+
 HUOM! Selaimen Local Storage on syytä tarvittaessa tyhjentää `http://localhost:3000` kohdalta aluksi.
 
 ## Tämä projekti sisältää
