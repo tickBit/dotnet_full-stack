@@ -26,7 +26,7 @@ public class JwtService
             issuer: _config["JWT_ISSUER"] ?? "AuthApi",
             audience: _config["JWT_AUDIENCE"] ?? "AuthApi",
             claims: claims,
-            expires: DateTime.Now.AddHours(2),
+            expires: DateTime.Now.AddHours(1),
             signingCredentials: creds
         );
 
