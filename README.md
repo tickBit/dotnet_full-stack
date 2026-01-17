@@ -69,9 +69,9 @@ DEFAULT_CONNSTRING=Server=(localdb)\MSSQLLocalDB;Database=AuthApiDb;Trusted_Conn
 
 #### Kuva
 
-![Notes-demo](https://github.com/user-attachments/assets/3cb63895-fbad-42d3-b642-40e45718c3b3)
+![Notes-demo](https://github.com/user-attachments/assets/30cdec5e-5462-4b43-8f18-6c08784135a4)
 
-Menu klikattu näkyviin.
+Paranneltu menu klikattu näkyviin.
 
 
 
