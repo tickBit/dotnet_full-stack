@@ -185,8 +185,8 @@ const NotesPage = () => {
     
     return (
         <>
-            {showError.backend === true ? <Dialog title="Something went wrong.." ok="Ok" onConfirm={() => setShowError({backend: false, input: false})} color="lightred" /> : null}
-            {showError.input === true ? <Dialog title="Input error: Note cannot be empty or longer than 20 characters." ok="Ok" onConfirm={() => setShowError({backend: false, input: false})} color="lightred" /> : null}
+            {showError.backend === true ? <Dialog title="Something went wrong.." content = "" ok="Ok" onConfirm={() => setShowError({backend: false, input: false})} color="lightred" /> : null}
+            {showError.input === true ? <Dialog title="Input error" content="Note cannot be empty or longer than 20 characters." ok="Ok" onConfirm={() => setShowError({backend: false, input: false})} color="lightred" /> : null}
             {showConfirmDelete.ok === true ? <Dialog title="Are you sure?" ok="Yes" no="Cancel" onCancel={() => setShowConfirmDelete({ok: false, id: undefined})} onConfirm={() => deleteNote(showConfirmDelete.id)} color="lightred" /> : null}
             <div className='page'>
             <div style={{ textAlign: "center" }}>
