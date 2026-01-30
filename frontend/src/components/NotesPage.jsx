@@ -10,7 +10,7 @@ const NotesPage = () => {
     const [currentFour, setCurrentFour] = React.useState([]);
     const [page, setPage] = React.useState(1);
     const [showConfirmDelete, setShowConfirmDelete] = React.useState({ok: false, id: undefined});
-    const [showError, setShowError] = React.useState(false);
+    const [showError, setShowError] = React.useState({backend: false, input: false});
     const [editLine, setEditLine] = React.useState(undefined);
     const [editedText, setEditedText] = React.useState("");
     const [editMode, setEditMode] = React.useState(false);
@@ -66,7 +66,7 @@ const NotesPage = () => {
                 
                 
             } catch(error) {
-                showError(true);
+                showError({backend: true, input: false});
             }
         }
     }
@@ -92,10 +92,10 @@ const NotesPage = () => {
             
                 setTotalCount(totalCount - 1);
             }
-            else setShowError(true);
+            else setShowError({backend: true, input: false});
             
         } catch (error) {
-            setShowError(true);
+            setShowError({backend: true, input: false});
         }
     }
     
@@ -104,6 +104,11 @@ const NotesPage = () => {
         e.preventDefault();
         
         const note = document.getElementById("new-note").value;
+        
+        if (note.trim().length === 0 || note.length > 20) {
+            setShowError({backend: false, input: true});
+            return;
+        }
         
         try {
             const resp = await axios.post("http://localhost:5079/api/info", {note: note}, {
@@ -124,12 +129,12 @@ const NotesPage = () => {
                 setCurrentFour([resp.data, ...currentFour.slice(0,3)]);
                 setTotalCount(totalCount + 1);
             }
-            else setShowError(true);
+            else setShowError({backend: true, input: false});
                                     
             document.getElementById("new-note").value="";
             
         } catch(error) {
-            setShowError(true);
+            setShowError({backend: true, input: false});
         }
         
     }
@@ -168,7 +173,7 @@ const NotesPage = () => {
                     setLoading(false);        
                 }).catch((error) => {
                     console.log(error);
-                    setShowError(true);
+                    setShowError({backend: true, input: false});
                     setLoading(false);
                 })
             }
@@ -180,7 +185,8 @@ const NotesPage = () => {
     
     return (
         <>
-            {showError === true ? <Dialog title="Something went wrong.." ok="Ok" onConfirm={() => setShowError(false)} color="lightred" /> : null}
+            {showError.backend === true ? <Dialog title="Something went wrong.." ok="Ok" onConfirm={() => setShowError({backend: false, input: false})} color="lightred" /> : null}
+            {showError.input === true ? <Dialog title="Input error: Note cannot be empty or longer than 20 characters." ok="Ok" onConfirm={() => setShowError({backend: false, input: false})} color="lightred" /> : null}
             {showConfirmDelete.ok === true ? <Dialog title="Are you sure?" ok="Yes" no="Cancel" onCancel={() => setShowConfirmDelete({ok: false, id: undefined})} onConfirm={() => deleteNote(showConfirmDelete.id)} color="lightred" /> : null}
             <div className='page'>
             <div style={{ textAlign: "center" }}>
