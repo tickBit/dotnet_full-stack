@@ -79,7 +79,7 @@ const Register = () => {
         <Header />
         <div className='register'>
         <h2>Register</h2>
-        {showError ? <Dialog title="Something went wrong.." ok="Ok" color="lightred" confirm={() => setShowError(false)} /> : null}
+        {showError ? <Dialog title="Something went wrong.." content = "" ok="Ok" color="lightred" onConfirm={() => setShowError(false)} /> : null}
         {!passwordsOk ? <Dialog title="Passwords don't match" ok="Ok" color="lightred" onConfirm={() => handleResetForm()} /> : null}
         {!emailOk ? <Dialog title="Provide an email" ok="Ok" color="lightred" onConfirm={() => handleResetForm()} /> : null}
         
