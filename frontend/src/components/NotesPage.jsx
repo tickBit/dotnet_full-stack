@@ -105,7 +105,7 @@ const NotesPage = () => {
         
         const note = document.getElementById("new-note").value;
         
-        if (note.trim().length === 0 || note.length > 20) {
+        if (note.trim().length === 0 || note.length > 25) {
             setShowError({backend: false, input: true});
             return;
         }
@@ -186,7 +186,7 @@ const NotesPage = () => {
     return (
         <>
             {showError.backend === true ? <Dialog title="Something went wrong.." content = "" ok="Ok" onConfirm={() => setShowError({backend: false, input: false})} color="lightred" /> : null}
-            {showError.input === true ? <Dialog title="Input error" content="Note cannot be empty or longer than 20 characters." ok="Ok" onConfirm={() => setShowError({backend: false, input: false})} color="lightred" /> : null}
+            {showError.input === true ? <Dialog title="Input error" content="Note cannot be empty or longer than 25 characters." ok="Ok" onConfirm={() => setShowError({backend: false, input: false})} color="lightred" /> : null}
             {showConfirmDelete.ok === true ? <Dialog title="Are you sure?" ok="Yes" no="Cancel" onCancel={() => setShowConfirmDelete({ok: false, id: undefined})} onConfirm={() => deleteNote(showConfirmDelete.id)} color="lightred" /> : null}
             <div className='page'>
             <div style={{ textAlign: "center" }}>
