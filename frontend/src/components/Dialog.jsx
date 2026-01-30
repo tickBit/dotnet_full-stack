@@ -1,7 +1,7 @@
 const Dialog = (props) => {
     
     document.getElementsByClassName("page")[0].style.filter = "blur(3px)";
-    document.getElementsByClassName("page")[0].intert = true;
+    document.getElementsByClassName("page")[0].inert = true;
     
     const handleYes = () => {
         document.getElementsByClassName("page")[0].style.filter = "blur(0px)";
