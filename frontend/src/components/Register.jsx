@@ -69,6 +69,14 @@ const Register = () => {
                 
             } catch (error) {
                 setShowError(true);
+                
+                document.getElementsByClassName("email")[0].value = "";
+                
+                let arr = document.getElementsByClassName("password");
+                arr[0].value = "";
+                arr[1].value = "";
+                
+                return;
             }
         }
         
