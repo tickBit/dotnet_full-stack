@@ -191,6 +191,18 @@ const NotesPage = () => {
             <div className='page'>
             <div style={{ textAlign: "center" }}>
                 <h2>Notes:</h2>
+                
+                <label for="notes">Notes on page:</label>
+
+                <select name="notes" id="notes" onChange={(e) => { setPageSize(parseInt(e.target.value)); setPage(1); }} value={pageSize} className='notes-on-page'>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                </select>
+                
+                <br />
+                
                 <form onSubmit={(e) => getNote(e)}>
                     <label htmlFor="new-note">Add new note: </label>
                     <input type="text" name="new-note" id="new-note" className='new-note-class' />
