@@ -7,7 +7,7 @@ const NotesPage = () => {
     
     const [totalCount, setTotalCount] = React.useState(0);
     const [pageSize, setPageSize] = React.useState(4);
-    const [currentFour, setCurrentFour] = React.useState([]);
+    const [currentNotes, setCurrentNotes] = React.useState([]);
     const [page, setPage] = React.useState(1);
     const [showConfirmDelete, setShowConfirmDelete] = React.useState({ok: false, id: undefined});
     const [showError, setShowError] = React.useState({backend: false, input: false});
@@ -62,7 +62,7 @@ const NotesPage = () => {
                 setEditMode(false);
                 setEditLine(undefined);
                 setEditedText("");
-                setCurrentFour(currentFour.map((n) => (n.id === id) ? resp.data : n));
+                setCurrentNotes(currentNotes.map((n) => (n.id === id) ? resp.data : n));
                 
                 
             } catch(error) {
@@ -88,7 +88,7 @@ const NotesPage = () => {
             }
             
             if (resp.status === 200) {
-                setCurrentFour(currentFour.filter((n) => (n.id !== id)));
+                setCurrentNotes(currentNotes.filter((n) => (n.id !== id)));
             
                 setTotalCount(totalCount - 1);
             }
@@ -126,7 +126,7 @@ const NotesPage = () => {
             
             if (resp.status === 200) {
                 setPage(1);
-                setCurrentFour([resp.data, ...currentFour.slice(0,3)]);
+                setCurrentNotes([resp.data, ...currentNotes.slice(0,3)]);
                 setTotalCount(totalCount + 1);
             }
             else setShowError({backend: true, input: false});
@@ -160,13 +160,13 @@ const NotesPage = () => {
                             return;
                         }
                         
-                        setCurrentFour(response.data.items);
+                        setCurrentNotes(response.data.items);
                         
                         setTotalCount(response.data.totalCount);
                         
                     
                     } catch {
-                        setCurrentFour([]);
+                        setCurrentNotes([]);
                         setTotalCount(0);
                     }
             
@@ -180,7 +180,7 @@ const NotesPage = () => {
         
         fetchNotes();
         
-    }, [token, currentFour.items, page, pageSize, totalCount, totalPages, logout]);
+    }, [token, currentNotes.items, page, pageSize, totalCount, totalPages, logout]);
     
     
     return (
@@ -212,9 +212,9 @@ const NotesPage = () => {
             <br />
             <div className='notes-container'>
             {loading === true ? <> <p style={{ textAlign: "center"}}>Loading...</p></> : <>
-                {currentFour.length === 0 ? <p style={{ textAlign: "center"}}>No notes yet.</p> : <>
+                {currentNotes.length === 0 ? <p style={{ textAlign: "center"}}>No notes yet.</p> : <>
                     {
-                    currentFour.map((item,i) => (
+                    currentNotes.map((item,i) => (
                     <div id={"a"+item.id} key={i} style={{ alignItems: "start", border: "1px solid black", borderRadius: "5px", padding: "10px", marginBottom: "10px", backgroundColor: "#f0f0f0"}}>    
                             {editLine === item.id ? <> <input type="text" value={editedText} onKeyUp={(e) => handleUpdate(e, item.id)} onChange={(e) => editChange(e)} className='edit-text' id="edit-text" /> </> : <> {item.note} </> }
                             <div style={{ textAlign: "right" }}>
@@ -225,7 +225,7 @@ const NotesPage = () => {
                 ))}
                 
                  
-                { hasPrev ? <button className='buttons' style={{ backgroundColor: "blue", marginTop: "10px", marginLeft: "10px"}} onClick={() => { setPage(page - 1) }}>Show 4 previous</button>  : null }
+                { hasPrev ? <button className='buttons' style={{ backgroundColor: "blue", marginTop: "10px", marginLeft: "10px"}} onClick={() => { setPage(page - 1) }}>Show {pageSize} previous</button>  : null }
                 { hasNext ? <button className='buttons' style={{ backgroundColor: "blue", marginTop: "10px"}} onClick={() => { setPage(page + 1) }} >Load more</button> : null }
                 
             
