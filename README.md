@@ -4,7 +4,7 @@ Käyttäjiä voi rekisteröidä ja kirjata sisään. Kirjautunut käyttäjä voi
 
 Muistiinpanoa voi muokata klikkaamalla kynää. Muistiinpano tallennetaan painamalla sitten returnia. Jollei halua tallentaa muistiinpanoa, niin klikkaamalla kynää uudelleen palaudutaan muokkaustilasta.
 
-Roskakoria klikkaamalla voi poistaa muistiinpanon.
+Roskakoria klikkaamalla voi poistaa muistiinpanon. Alasvetovalikosta voidaan valita muistiinpanojen määrä sivulla (ja siten montako haetaan backendin kautta kerralla).
 
 Sovelluksessa on sivutus (engl. pagination).
 
@@ -69,7 +69,7 @@ DEFAULT_CONNSTRING=Server=(localdb)\MSSQLLocalDB;Database=AuthApiDb;Trusted_Conn
 
 #### Kuva
 
-![Notes-demo](https://github.com/user-attachments/assets/30cdec5e-5462-4b43-8f18-6c08784135a4)
+
 
 Paranneltu menu klikattu näkyviin.
 
