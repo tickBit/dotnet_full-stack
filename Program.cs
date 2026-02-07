@@ -18,7 +18,7 @@ var builder = WebApplication.CreateBuilder(args);
 var connString = Environment.GetEnvironmentVariable("DEFAULT_CONNSTRING") 
                  ?? "Server=(localdb)\\MSSQLLocalDB;Database=AuthApiDb;Trusted_Connection=True;";
 
-var jwtKey = Environment.GetEnvironmentVariable("JWT_KEY") ?? "SUPER_SECRET_KEY_123";
+var jwtKey = Environment.GetEnvironmentVariable("JWT_KEY") ?? "SUPER_SECRET_KEY_123_FOR_MY_AND_EVERYONE_ELSES_EYES_ONLY";
 var jwtIssuer = Environment.GetEnvironmentVariable("JWT_ISSUER") ?? "AuthApi";
 var jwtAudience = Environment.GetEnvironmentVariable("JWT_AUDIENCE") ?? "AuthApi";
 
