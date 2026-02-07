@@ -5,12 +5,13 @@ import NotesPage from './components/NotesPage';
 
 function App() {
 
-  const { token } = useAuth();
+  const { token, useremail } = useAuth();
     
   return (
     <div className="App">
       <Header />
-      <h1>Welcome to the full-stack Note taking demo</h1>
+      {useremail !== "" ? <><h1>Welcome {useremail}!</h1></> :     
+      <h1>Welcome to the full-stack Note taking demo</h1>}
       {token  !== '' ? <NotesPage /> :
        <p>Login to make notes to this page.</p>}
     </div>
