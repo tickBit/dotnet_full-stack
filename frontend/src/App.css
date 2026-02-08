@@ -101,6 +101,7 @@ input {
   background-color: blue;
   margin-top: 0.5rem;
   margin-left: 1rem;
+  margin-bottom: 0.5rem;
 }
 
 .login {
@@ -138,6 +139,21 @@ input {
   width: 20em;
   margin-left: 7px;
   z-index: 0;
+}
+
+.search-container {
+  width: 25em;
+  margin: auto;
+  text-align: left;
+}
+
+.search-input {
+  margin-bottom: 0.7rem;
+  width: 20em;
+  padding: 0.5rem;
+  margin-top: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
 }
 
 .page {

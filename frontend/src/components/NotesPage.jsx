@@ -29,7 +29,7 @@ const NotesPage = () => {
         // fetch all notes from backend, value as search keyword
         let results = [];
         
-        await axios.get("http://localhost:5079/api/info/search", {
+        await axios.get("http://localhost:5079/api/search", {
                     headers: { Authorization: `Bearer ${token}` },
                     params: { keyword: value }
 
@@ -220,13 +220,17 @@ const NotesPage = () => {
             <div className='page'>
             
             <div className="search-container">
-                <input type="text" placeholder="Search notes..." className='search-input' onChange={(e) => searchFunction(e) } />
+                <form onSubmit={(e) => { e.preventDefault(); }} style={{ display: "flex", alignItems: "center" }}>
+                    <label htmlFor="search-input" style={{ marginRight: "10px" }}>Search: </label>
+                    <input type="text" id="search-input" placeholder="Search notes..." className='search-input' />
+                    <button type="submit" className='buttons' style={{ backgroundColor: "blue", marginLeft: "10px"}} onClick={(e) => searchFunction(e)}>Search</button>
+                </form>
             </div>
             
             <div style={{ textAlign: "center" }}>
                 <h2>Notes:</h2>
                 
-                <label for="notes">Notes on page:</label>
+                <label htmlFor="notes">Notes on page:</label>
 
                 <select name="notes" id="notes" onChange={(e) => { setPageSize(parseInt(e.target.value)); setPage(1); }} value={pageSize} className='notes-on-page'>
                 <option value="2">2</option>
