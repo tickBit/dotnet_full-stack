@@ -12,6 +12,8 @@ Sovelluksessa on sivutus (engl. pagination).
 
 16.1.2026 alkaen token kestää yhden tunnin, minkä jälkeen käyttäjä kirjataan ulos.
 
+Kirjautunut käyttäjä voi etsiä muistiinpanoja hakusanalla.
+
 HUOM! Selaimen Local Storage on syytä tarvittaessa tyhjentää `http://localhost:3000` kohdalta aluksi.
 
 ## Tämä projekti sisältää
@@ -69,9 +71,9 @@ DEFAULT_CONNSTRING=Server=(localdb)\MSSQLLocalDB;Database=AuthApiDb;Trusted_Conn
 
 #### Kuva
 
-![Notes-demo](https://github.com/user-attachments/assets/cdcdde4e-d55e-4f57-b5e1-e800c01ef77e)
+![Notes-demo](https://github.com/user-attachments/assets/a43d7bfc-28fa-41e4-aaf6-d8b514223a99)
 
-Paranneltu menu klikattu näkyviin.
+Paranneltu menu klikattu näkyviin. Hakutuloksia näkyy.
 
 
 
