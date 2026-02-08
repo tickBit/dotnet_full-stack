@@ -23,9 +23,11 @@ const NotesPage = () => {
     const { token, logout } = useAuth();
     
     const searchFunction = async(e) => {
+        e.preventDefault();
         
-        const value = e.target.value.toLowerCase();
+        const value = document.getElementById("search-input").value;
         
+        console.log(value);
         // fetch all notes from backend, value as search keyword
         let results = [];
         
@@ -40,6 +42,7 @@ const NotesPage = () => {
                             return;
                         }
                         
+                        console.log(response);
                         results = response.data;
                     } catch {
                         results = [];
@@ -220,10 +223,10 @@ const NotesPage = () => {
             <div className='page'>
             
             <div className="search-container">
-                <form onSubmit={(e) => { e.preventDefault(); }} style={{ display: "flex", alignItems: "center" }}>
+                <form onSubmit={ (e) => searchFunction(e) } style={{ display: "flex", justifyContent: "center", alignItems: "center", marginBottom: "20px" }}>
                     <label htmlFor="search-input" style={{ marginRight: "10px" }}>Search: </label>
-                    <input type="text" id="search-input" placeholder="Search notes..." className='search-input' />
-                    <button type="submit" className='buttons' style={{ backgroundColor: "blue", marginLeft: "10px"}} onClick={(e) => searchFunction(e)}>Search</button>
+                    <input type="text" name="search-input" id="search-input" placeholder="Search notes..." className='search-input-class' />
+                    <button type="submit" id="search-input-button" className='buttons' style={{ backgroundColor: "blue", marginLeft: "10px"}} >Search</button>
                 </form>
             </div>
             
