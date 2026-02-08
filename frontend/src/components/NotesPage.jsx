@@ -17,6 +17,7 @@ const NotesPage = () => {
     const [loading, setLoading] = React.useState(false);
     const [hasPrev, setHasPrev] = React.useState(false);
     const [hasNext, setHasNext] = React.useState(false);
+    const [searchResults, setSearchResults] = React.useState([]);
     
     const totalPages = Math.ceil(totalCount / pageSize);
 
@@ -29,7 +30,6 @@ const NotesPage = () => {
         
         console.log(value);
         // fetch all notes from backend, value as search keyword
-        let results = [];
         
         await axios.get("http://localhost:5079/api/search", {
                     headers: { Authorization: `Bearer ${token}` },
@@ -42,16 +42,14 @@ const NotesPage = () => {
                             return;
                         }
                         
-                        console.log(response);
-                        results = response.data;
+                        setSearchResults(response.data);
                     } catch {
-                        results = [];
+                            setSearchResults([]);
                     }
                 }).catch((error) => {
                     console.log(error);
                     setShowError({backend: true, input: false});
                 })
-        console.log(results);
     }
     
     const handleSetLine = (id, text) => {
@@ -228,6 +226,18 @@ const NotesPage = () => {
                     <input type="text" name="search-input" id="search-input" placeholder="Search notes..." className='search-input-class' />
                     <button type="submit" id="search-input-button" className='buttons' style={{ backgroundColor: "blue", marginLeft: "10px"}} >Search</button>
                 </form>
+            </div>
+    
+            <div style={{ textAlign: "center", marginBottom: "20px" }}>
+                {searchResults.length > 0 ? <> <button className='buttons' style={{ backgroundColor: "blue", marginBottom: "10px"}} onClick={() => setSearchResults([])} >Clear search results</button>
+                    {searchResults.map((item, i) => (
+                        <div key={i} style={{ width: "50%", margin: "0 auto", border: "1px solid black", borderRadius: "5px", padding: "10px", marginBottom: "10px", backgroundColor: "#f0f0f0"}}>    
+                            {item.note}
+                        </div>
+                    ))}
+                </>
+                : null}
+
             </div>
             
             <div style={{ textAlign: "center" }}>
