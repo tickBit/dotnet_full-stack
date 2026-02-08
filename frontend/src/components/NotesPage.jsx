@@ -10,7 +10,7 @@ const NotesPage = () => {
     const [currentNotes, setCurrentNotes] = React.useState([]);
     const [page, setPage] = React.useState(1);
     const [showConfirmDelete, setShowConfirmDelete] = React.useState({ok: false, id: undefined});
-    const [showError, setShowError] = React.useState({backend: false, input: false});
+    const [showError, setShowError] = React.useState({backend: false, input: false, content: ""});
     const [editLine, setEditLine] = React.useState(undefined);
     const [editedText, setEditedText] = React.useState("");
     const [editMode, setEditMode] = React.useState(false);
@@ -28,8 +28,10 @@ const NotesPage = () => {
         
         const value = document.getElementById("search-input").value;
         
-        console.log(value);
-        // fetch all notes from backend, value as search keyword
+        if (value.trim().length === 0) {
+            setShowError({backend: false, input: true, content: "Search keyword cannot be empty."});
+            return;
+        }
         
         await axios.get("http://localhost:5079/api/search", {
                     headers: { Authorization: `Bearer ${token}` },
@@ -136,7 +138,7 @@ const NotesPage = () => {
         const note = document.getElementById("new-note").value;
         
         if (note.trim().length === 0 || note.length > 25) {
-            setShowError({backend: false, input: true});
+            setShowError({backend: false, input: true, content: "Note cannot be empty or longer than 25 characters."});
             return;
         }
         
@@ -216,7 +218,7 @@ const NotesPage = () => {
     return (
         <>
             {showError.backend === true ? <Dialog title="Something went wrong.." content = "" ok="Ok" onConfirm={() => setShowError({backend: false, input: false})} color="lightred" /> : null}
-            {showError.input === true ? <Dialog title="Input error" content="Note cannot be empty or longer than 25 characters." ok="Ok" onConfirm={() => setShowError({backend: false, input: false})} color="lightred" /> : null}
+            {showError.input === true ? <Dialog title="Input error" content={showError.content} ok="Ok" onConfirm={() => setShowError({backend: false, input: false})} color="lightred" /> : null}
             {showConfirmDelete.ok === true ? <Dialog title="Are you sure?" ok="Yes" no="Cancel" onCancel={() => setShowConfirmDelete({ok: false, id: undefined})} onConfirm={() => deleteNote(showConfirmDelete.id)} color="lightred" /> : null}
             <div className='page'>
             
