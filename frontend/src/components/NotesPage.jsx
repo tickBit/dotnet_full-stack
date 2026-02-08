@@ -22,6 +22,35 @@ const NotesPage = () => {
 
     const { token, logout } = useAuth();
     
+    const searchFunction = async(e) => {
+        
+        const value = e.target.value.toLowerCase();
+        
+        // fetch all notes from backend, value as search keyword
+        let results = [];
+        
+        await axios.get("http://localhost:5079/api/info/search", {
+                    headers: { Authorization: `Bearer ${token}` },
+                    params: { keyword: value }
+
+                }).then((response) => {
+                    try {      
+                        if (response.status === 401) {
+                            logout();
+                            return;
+                        }
+                        
+                        results = response.data;
+                    } catch {
+                        results = [];
+                    }
+                }).catch((error) => {
+                    console.log(error);
+                    setShowError({backend: true, input: false});
+                })
+        console.log(results);
+    }
+    
     const handleSetLine = (id, text) => {
                         
         setEditLine(id);
@@ -189,6 +218,11 @@ const NotesPage = () => {
             {showError.input === true ? <Dialog title="Input error" content="Note cannot be empty or longer than 25 characters." ok="Ok" onConfirm={() => setShowError({backend: false, input: false})} color="lightred" /> : null}
             {showConfirmDelete.ok === true ? <Dialog title="Are you sure?" ok="Yes" no="Cancel" onCancel={() => setShowConfirmDelete({ok: false, id: undefined})} onConfirm={() => deleteNote(showConfirmDelete.id)} color="lightred" /> : null}
             <div className='page'>
+            
+            <div className="search-container">
+                <input type="text" placeholder="Search notes..." className='search-input' onChange={(e) => searchFunction(e) } />
+            </div>
+            
             <div style={{ textAlign: "center" }}>
                 <h2>Notes:</h2>
                 
