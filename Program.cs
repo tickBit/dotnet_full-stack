@@ -112,6 +112,21 @@ app.MapDelete("/api/users/delete", [Authorize] async (AppDbContext db, HttpConte
     return Results.Ok("Account deleted successfully.");
 });
 
+app.MapGet("/api/search", [Authorize] async (AppDbContext db, HttpContext context, string query) =>
+{
+    var userEmail = context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+    var user = await db.Users.FirstOrDefaultAsync(u => u.Email == userEmail);
+    if (user == null)
+        return Results.NotFound("User not found");
+
+    var results = await db.Infos
+        .Where(i => i.UserId == user.Id && i.Note.Contains(query))
+        .ToListAsync();
+
+    return Results.Ok(results);
+});
+
 app.MapPost("/api/info", [Authorize] async (AppDbContext db, HttpContext context, InfoDto dto) =>
 {
     var userEmail = context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
