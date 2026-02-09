@@ -112,7 +112,7 @@ app.MapDelete("/api/users/delete", [Authorize] async (AppDbContext db, HttpConte
     return Results.Ok("Account deleted successfully.");
 });
 
-app.MapGet("/api/search", [Authorize] async (AppDbContext db, HttpContext context, string keyword) =>
+app.MapGet("/api/search", [Authorize] async (AppDbContext db, HttpContext context, string keyword, int page, int pageSize) =>
 {
     var userEmail = context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
@@ -123,6 +123,8 @@ app.MapGet("/api/search", [Authorize] async (AppDbContext db, HttpContext contex
     var results = await db.Infos
         .Where(i => i.UserId == user.Id && i.Note.Contains(keyword))
         .OrderByDescending(i => i.Id)
+        .Skip((page - 1) * pageSize)
+        .Take(pageSize)
         .ToListAsync();
 
     return Results.Ok(results);
