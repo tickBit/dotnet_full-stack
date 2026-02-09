@@ -120,6 +120,10 @@ app.MapGet("/api/search", [Authorize] async (AppDbContext db, HttpContext contex
     if (user == null)
         return Results.NotFound("User not found");
 
+    var totalCount = await db.Infos
+        .Where(i => i.UserId == user.Id && i.Note.Contains(keyword))
+        .CountAsync();
+        
     var results = await db.Infos
         .Where(i => i.UserId == user.Id && i.Note.Contains(keyword))
         .OrderByDescending(i => i.Id)
@@ -127,7 +131,9 @@ app.MapGet("/api/search", [Authorize] async (AppDbContext db, HttpContext contex
         .Take(pageSize)
         .ToListAsync();
 
-    return Results.Ok(results);
+    return Results.Ok(new {
+        TotalCount = totalCount,
+        Items = results});
 });
 
 app.MapPost("/api/info", [Authorize] async (AppDbContext db, HttpContext context, InfoDto dto) =>
