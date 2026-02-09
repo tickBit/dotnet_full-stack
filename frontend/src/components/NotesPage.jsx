@@ -48,7 +48,8 @@ const NotesPage = () => {
                             return;
                         }
                         
-                        setSearchResults(response.data);
+                        setSearchResults(response.data.items);
+                        setSearchResultsCount(response.data.totalCount);
                     } catch {
                             setSearchResults([]);
                     }
@@ -180,11 +181,8 @@ const NotesPage = () => {
         // pagination for notes
         if (page < totalPages) setHasNext(true); else setHasNext(false);
         if (page > 1) setHasPrev(true); else setHasPrev(false);
-    
-        // pagination for search results
-        setSearchResultsCount(searchResults.length);
-        
-        if (searchResultsPage < searchResultsCount) setHasNextSearch(true); else setHasNextSearch(false);
+            
+        if (searchResultsPage < Math.ceil(searchResultsCount / 2)) setHasNextSearch(true); else setHasNextSearch(false);
         if (searchResultsPage > 1) setHasPrevSearch(true); else setHasPrevSearch(false);
         
         const fetchSearchResults = async() => {
@@ -207,7 +205,8 @@ const NotesPage = () => {
                                 return;
                             }
                             
-                            setSearchResults(response.data);
+                            setSearchResults(response.data.items);
+                            setSearchResultsCount(response.data.totalCount);
                         } catch {
                                 setSearchResults([]);
                         }
@@ -275,6 +274,7 @@ const NotesPage = () => {
     
             <div style={{ textAlign: "center", marginBottom: "20px" }}>
                 {searchResults.length > 0 ? <> <button className='buttons' style={{ backgroundColor: "blue", marginBottom: "10px"}} onClick={() => setSearchResults([])} >Clear search results</button>
+                     ({searchResultsCount} results)
                     {searchResults.map((item, i) => (
                         <div key={i} style={{ width: "50%", margin: "0 auto", border: "1px solid black", borderRadius: "5px", padding: "10px", marginBottom: "10px", backgroundColor: "#f0f0f0"}}>    
                             {item.note}
