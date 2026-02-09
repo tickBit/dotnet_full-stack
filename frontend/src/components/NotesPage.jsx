@@ -20,7 +20,9 @@ const NotesPage = () => {
     const [searchResults, setSearchResults] = React.useState([]);
     const [searchResultsPage, setSearchResultsPage] = React.useState(1);
     const [searchResultsCount, setSearchResultsCount] = React.useState(0);  
-
+    const [hasPrevSearch, setHasPrevSearch] = React.useState(false);
+    const [hasNextSearch, setHasNextSearch] = React.useState(false);
+    
     const totalPages = Math.ceil(totalCount / pageSize);
 
     const { token, logout } = useAuth();
@@ -175,9 +177,48 @@ const NotesPage = () => {
     // fetch new notes, when there is any
     useEffect(() => {
         
+        // pagination for notes
         if (page < totalPages) setHasNext(true); else setHasNext(false);
         if (page > 1) setHasPrev(true); else setHasPrev(false);
     
+        // pagination for search results
+        setSearchResultsCount(searchResults.length);
+        
+        if (searchResultsPage < searchResultsCount) setHasNextSearch(true); else setHasNextSearch(false);
+        if (searchResultsPage > 1) setHasPrevSearch(true); else setHasPrevSearch(false);
+        
+        const fetchSearchResults = async() => {
+            
+            const value = document.getElementById("search-input").value;
+            
+            if (value.trim().length === 0) {
+                setShowError({backend: false, input: true, content: "Search keyword cannot be empty."});
+                return;
+            }
+            
+            await axios.get("http://localhost:5079/api/search", {
+                        headers: { Authorization: `Bearer ${token}` },
+                        params: { keyword: value, page: searchResultsPage, pageSize: 2 }
+
+                    }).then((response) => {
+                        try {      
+                            if (response.status === 401) {
+                                logout();
+                                return;
+                            }
+                            
+                            setSearchResults(response.data);
+                        } catch {
+                                setSearchResults([]);
+                        }
+                    }).catch((error) => {
+                        console.log(error);
+                        setShowError({backend: true, input: false});
+                    })
+        }
+        
+        if (searchResults.length > 0) fetchSearchResults();
+        
         const fetchNotes = async () => {
             
             setLoading(true);
@@ -214,7 +255,7 @@ const NotesPage = () => {
         
         fetchNotes();
         
-    }, [token, currentNotes.items, page, pageSize, totalCount, totalPages, logout]);
+    }, [token, currentNotes.items, page, pageSize, totalCount, totalPages, logout, searchResultsPage, searchResultsCount, searchResults.length]);
     
     
     return (
@@ -230,8 +271,6 @@ const NotesPage = () => {
                     <input type="text" name="search-input" id="search-input" placeholder="Search notes..." className='search-input-class' />
                     <button type="submit" id="search-input-button" className='buttons' style={{ backgroundColor: "blue", marginLeft: "10px"}} >Search</button>
                 </form>
-                <button className="buttons" onClick={() => setSearchResultsPage(searchResultsPage - 1) }>Less</button>
-                <button className="buttons" onClick={() => setSearchResultsPage(searchResultsPage + 1) }>More</button>
             </div>
     
             <div style={{ textAlign: "center", marginBottom: "20px" }}>
@@ -241,9 +280,10 @@ const NotesPage = () => {
                             {item.note}
                         </div>
                     ))}
-                </>
-                : null}
-
+                {hasPrevSearch && <><button className="buttons" onClick={() => setSearchResultsPage(searchResultsPage - 1) }>Previous</button> </> }
+                {hasNextSearch && <><button className="buttons" onClick={() => setSearchResultsPage(searchResultsPage + 1) }>More</button> </>}
+                </> : null}
+                
             </div>
             
             <div style={{ textAlign: "center" }}>
