@@ -71,9 +71,9 @@ DEFAULT_CONNSTRING=Server=(localdb)\MSSQLLocalDB;Database=AuthApiDb;Trusted_Conn
 
 #### Kuva
 
-![Notes-demo](https://github.com/user-attachments/assets/a43d7bfc-28fa-41e4-aaf6-d8b514223a99)
+![Notes-demo](https://github.com/user-attachments/assets/49f90bca-ce81-4923-8bd3-f814aaf5a5b1)
 
-Paranneltu menu klikattu näkyviin. Hakutuloksia näkyy.
+Paranneltu menu klikattu näkyviin. Hakutuloksia näkyy ja niissä sivutus (pagination).
 
 
 
