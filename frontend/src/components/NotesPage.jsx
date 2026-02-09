@@ -30,6 +30,10 @@ const NotesPage = () => {
     const searchFunction = async(e) => {
         e.preventDefault();
         
+        setSearchResultsPage(1);
+        setSearchResultsCount(0);
+        setSearchResults([]);
+        
         const value = document.getElementById("search-input").value;
         
         if (value.trim().length === 0) {
