@@ -18,7 +18,9 @@ const NotesPage = () => {
     const [hasPrev, setHasPrev] = React.useState(false);
     const [hasNext, setHasNext] = React.useState(false);
     const [searchResults, setSearchResults] = React.useState([]);
-    
+    const [searchResultsPage, setSearchResultsPage] = React.useState(1);
+    const [searchResultsCount, setSearchResultsCount] = React.useState(0);  
+
     const totalPages = Math.ceil(totalCount / pageSize);
 
     const { token, logout } = useAuth();
@@ -35,7 +37,7 @@ const NotesPage = () => {
         
         await axios.get("http://localhost:5079/api/search", {
                     headers: { Authorization: `Bearer ${token}` },
-                    params: { keyword: value }
+                    params: { keyword: value, page: searchResultsPage, pageSize: 2 }
 
                 }).then((response) => {
                     try {      
@@ -228,6 +230,8 @@ const NotesPage = () => {
                     <input type="text" name="search-input" id="search-input" placeholder="Search notes..." className='search-input-class' />
                     <button type="submit" id="search-input-button" className='buttons' style={{ backgroundColor: "blue", marginLeft: "10px"}} >Search</button>
                 </form>
+                <button className="buttons" onClick={() => setSearchResultsPage(searchResultsPage - 1) }>Less</button>
+                <button className="buttons" onClick={() => setSearchResultsPage(searchResultsPage + 1) }>More</button>
             </div>
     
             <div style={{ textAlign: "center", marginBottom: "20px" }}>
