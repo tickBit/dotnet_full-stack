@@ -10,7 +10,7 @@ const NotesPage = () => {
     const [currentNotes, setCurrentNotes] = React.useState([]);
     const [page, setPage] = React.useState(1);
     const [showConfirmDelete, setShowConfirmDelete] = React.useState({ok: false, id: undefined});
-    const [showError, setShowError] = React.useState({backend: false, input: false, content: ""});
+    const [showError, setShowError] = React.useState({err: false, title: "", content: ""});
     const [editLine, setEditLine] = React.useState(undefined);
     const [editedText, setEditedText] = React.useState("");
     const [editMode, setEditMode] = React.useState(false);
@@ -37,7 +37,7 @@ const NotesPage = () => {
         const value = document.getElementById("search-input").value;
         
         if (value.trim().length === 0) {
-            setShowError({backend: false, input: true, content: "Search keyword cannot be empty."});
+            setShowError({err: true, title: "Input error", content: "Search keyword cannot be empty."});
             return;
         }
         
@@ -59,7 +59,7 @@ const NotesPage = () => {
                     }
                 }).catch((error) => {
                     console.log(error);
-                    setShowError({backend: true, input: false});
+                    setShowError({err: true, title: "Error!", content: "Problem while fetching search results"});
                 })
     }
     
@@ -107,7 +107,7 @@ const NotesPage = () => {
                 
                 
             } catch(error) {
-                showError({backend: true, input: false});
+                setShowError({err: true, title: "Error!", content: "Update failed"});
             }
         }
     }
@@ -133,10 +133,10 @@ const NotesPage = () => {
             
                 setTotalCount(totalCount - 1);
             }
-            else setShowError({backend: true, input: false});
+            else setShowError({err: true, title: "Error!", content: "Deleting failed"});
             
         } catch (error) {
-            setShowError({backend: true, input: false});
+            setShowError({err: true, title: "Error!", content: "Deleting failed"});
         }
     }
     
@@ -147,7 +147,7 @@ const NotesPage = () => {
         const note = document.getElementById("new-note").value;
         
         if (note.trim().length === 0 || note.length > 25) {
-            setShowError({backend: false, input: true, content: "Note cannot be empty or longer than 25 characters."});
+            setShowError({err: true, title: "Input error", content: "Note cannot be empty or longer than 25 characters."});
             return;
         }
         
@@ -170,12 +170,12 @@ const NotesPage = () => {
                 setCurrentNotes([resp.data, ...currentNotes.slice(0,3)]);
                 setTotalCount(totalCount + 1);
             }
-            else setShowError({backend: true, input: false});
+            else setShowError({err: true, title: "Error!", content: "Unable to write to database"});
                                     
             document.getElementById("new-note").value="";
             
         } catch(error) {
-            setShowError({backend: true, input: false});
+            setShowError({err: true, title: "Error!", content: "Unable to write to database"});
         }
         
     }
@@ -194,7 +194,7 @@ const NotesPage = () => {
             const value = document.getElementById("search-input").value;
             
             if (value.trim().length === 0) {
-                setShowError({backend: false, input: true, content: "Search keyword cannot be empty."});
+                setShowError({err: true, title: "Input error", content: "Search keyword cannot be empty."});
                 return;
             }
             
@@ -216,7 +216,7 @@ const NotesPage = () => {
                         }
                     }).catch((error) => {
                         console.log(error);
-                        setShowError({backend: true, input: false});
+                        setShowError({err: true, title: "Error!", content: "Error while fetching search results"});
                     })
         }
         
@@ -251,7 +251,7 @@ const NotesPage = () => {
                     setLoading(false);        
                 }).catch((error) => {
                     console.log(error);
-                    setShowError({backend: true, input: false});
+                    setShowError({err: true, title: "Error!", content: "Problem with fetching notes"});
                     setLoading(false);
                 })
             }
@@ -263,8 +263,7 @@ const NotesPage = () => {
     
     return (
         <>
-            {showError.backend === true ? <Dialog title="Something went wrong.." content = "" ok="Ok" onConfirm={() => setShowError({backend: false, input: false})} color="lightred" /> : null}
-            {showError.input === true ? <Dialog title="Input error" content={showError.content} ok="Ok" onConfirm={() => setShowError({backend: false, input: false})} color="lightred" /> : null}
+            {showError.err === true ? <Dialog title={showError.title} content = {showError.content} ok="Ok" onConfirm={() => setShowError({err: false, title: "", content: ""})} color="lightred" /> : null}
             {showConfirmDelete.ok === true ? <Dialog title="Are you sure?" ok="Yes" no="Cancel" onCancel={() => setShowConfirmDelete({ok: false, id: undefined})} onConfirm={() => deleteNote(showConfirmDelete.id)} color="lightred" /> : null}
             <div className='page'>
             
