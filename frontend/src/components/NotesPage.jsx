@@ -48,7 +48,7 @@ const NotesPage = () => {
                 }).then((response) => {
                     try {      
                         if (response.status === 401) {
-                            logout();
+                            logout(true);
                             return;
                         }
                         
@@ -96,7 +96,7 @@ const NotesPage = () => {
                     }});
                 
                 if (resp.status === 401) {
-                    logout();
+                    logout(true);
                     return;
                 }
                 
@@ -124,7 +124,7 @@ const NotesPage = () => {
             });
             
             if (resp.status === 401) {
-                logout();
+                logout(true);
                 return;
             }
             
@@ -161,7 +161,7 @@ const NotesPage = () => {
             );
             
             if (resp.status === 401) {
-                logout();
+                logout(true);
                 return;
             }
             
@@ -205,7 +205,7 @@ const NotesPage = () => {
                     }).then((response) => {
                         try {      
                             if (response.status === 401) {
-                                logout();
+                                logout(true);
                                 return;
                             }
                             
@@ -234,7 +234,7 @@ const NotesPage = () => {
                     try {
                         
                         if (response.status === 401) {
-                            logout();
+                            logout(true);
                             return;
                         }
                         

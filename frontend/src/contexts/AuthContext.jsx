@@ -37,6 +37,8 @@ export const AuthProvider = ({ children }) => {
     localStorage.getItem('token_demo') || ''
   );
 
+  const [isExpired, setIsExpired] = useState(false);
+  
   const scheduleAutoLogout = useCallback((token) => {
   
     const remaining = getRemainingTime(token);
@@ -47,7 +49,7 @@ export const AuthProvider = ({ children }) => {
 
     if (remaining > 0) {
         logoutTimer = setTimeout(() => {
-        logout();
+        logout(true);
       }, remaining);
     }
   }, []);
@@ -63,7 +65,7 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     if (token) {
       if (isTokenExpired(token)) {
-        logout();
+        logout(true);
       } else {
         scheduleAutoLogout(token);
       }
@@ -78,15 +80,16 @@ export const AuthProvider = ({ children }) => {
     if (!isTokenExpired(token)) {
       scheduleAutoLogout(token);
     } else {
-      logout();
+      logout(true);
     }
   };
 
-  const logout = () => {
+  const logout = (expired) => {
     setIsLoggedIn(false);
     setUseremail('');
     setToken('');
-
+    setIsExpired(expired);
+    
     if (logoutTimer) {
       clearTimeout(logoutTimer);
     }
@@ -94,7 +97,7 @@ export const AuthProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider
-      value={{ isLoggedIn, useremail, token, login, logout }}
+      value={{ isLoggedIn, useremail, token, isExpired, login, logout }}
     >
       {children}
     </AuthContext.Provider>

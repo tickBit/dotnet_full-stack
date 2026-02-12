@@ -25,7 +25,7 @@ const Profile = () => {
                 
                 if (resp.status === 200) {
                     setShowDialog(false);
-                    logout();
+                    logout(false);
                     setShowOk(true);
                 }
                 

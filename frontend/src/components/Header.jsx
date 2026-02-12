@@ -47,7 +47,7 @@ const Header = () => {
                     {location.pathname !== "/profile" && (
                     <li><Link to="/profile">Profile</Link></li>
                     )}
-                    <li><Link onClick={logout}>Logout</Link></li>
+                    <li><Link onClick={() => logout(false)}>Logout</Link></li>
                 </ul>
                 </nav>
                 </>
