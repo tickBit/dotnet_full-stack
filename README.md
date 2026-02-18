@@ -1,18 +1,18 @@
 # Full-stack: React frontend & .NET backend
 
-Käyttäjiä voi rekisteröidä ja kirjata sisään. Kirjautunut käyttäjä voi kirjoittaa muistiinpanoja, uusin ilmestyy ensimmäisenä. Käyttäjä voi tuhota tilinsä.
+- Käyttäjiä voi rekisteröidä ja kirjata sisään.
+- Kirjautunut käyttäjä voi kirjoittaa muistiinpanoja, uusin ilmestyy ensimmäisenä.
+- Käyttäjä voi tuhota tilinsä.
 
-Muistiinpanoa voi muokata klikkaamalla kynää. Muistiinpano tallennetaan painamalla sitten returnia. Jollei halua tallentaa muistiinpanoa, niin klikkaamalla kynää uudelleen palaudutaan muokkaustilasta.
+- Muistiinpanoa voi muokata klikkaamalla kynää. Muistiinpano tallennetaan painamalla sitten returnia. Jollei halua tallentaa muistiinpanoa, niin klikkaamalla kynää uudelleen palaudutaan muokkaustilasta.
+- Roskakoria klikkaamalla voi poistaa muistiinpanon.
+- Alasvetovalikosta voidaan valita muistiinpanojen määrä sivulla (ja siten montako haetaan backendin kautta kerralla).
 
-Roskakoria klikkaamalla voi poistaa muistiinpanon. Alasvetovalikosta voidaan valita muistiinpanojen määrä sivulla (ja siten montako haetaan backendin kautta kerralla).
+- Sovelluksessa on sivutus (engl. pagination).
+- "My Account":ia klikkaamalla kirjautuneena tulee menu, jossa "Profile" ja "Logout".
 
-Sovelluksessa on sivutus (engl. pagination).
-
-"My Account":ia klikkaamalla kirjautuneena tulee menu, jossa "Profile" ja "Logout".
-
-16.1.2026 alkaen token kestää yhden tunnin, minkä jälkeen käyttäjä kirjataan ulos.
-
-Kirjautunut käyttäjä voi etsiä muistiinpanoja hakusanalla.
+- Token kestää yhden tunnin, minkä jälkeen käyttäjä kirjataan ulos. Tällöin käyttäjä saa tiedon, että hänen istuntonsa vanheni.
+- Kirjautunut käyttäjä voi etsiä muistiinpanoja hakusanalla.
 
 HUOM! Selaimen Local Storage on syytä tarvittaessa tyhjentää `http://localhost:3000` kohdalta aluksi.
 
