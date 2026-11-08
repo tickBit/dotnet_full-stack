@@ -1,4 +1,4 @@
-import axios from "axios";
+import api from "../services/api";
 import Header from "./Header";
 import React from "react";
 import { useAuth } from "../contexts/AuthContext";
@@ -17,7 +17,7 @@ const Profile = () => {
     
     const handleDeleteUser = async () => {
             
-            await axios.delete("http://localhost:5079/api/users/delete", {
+            await api.delete("/api/users/delete", {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
