@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import api, { refreshAccessToken } from '../services/api';
 
 const AuthContext = createContext();
 
@@ -6,17 +7,11 @@ let logoutTimer;
 
 function parseJwt(token) {
   try {
-    return JSON.parse(atob(token.split('.')[1]));
+    const payload = token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
+    return JSON.parse(atob(payload.padEnd(Math.ceil(payload.length / 4) * 4, '=')));
   } catch {
     return null;
   }
-}
-
-function isTokenExpired(token) {
-  const payload = parseJwt(token);
-  if (!payload || !payload.exp) return true;
-
-  return Date.now() >= payload.exp * 1000;
 }
 
 function getRemainingTime(token) {
@@ -39,18 +34,24 @@ export const AuthProvider = ({ children }) => {
 
   const [isExpired, setIsExpired] = useState(false);
   
-  const scheduleAutoLogout = useCallback((token) => {
-  
-    const remaining = getRemainingTime(token);
+  const logout = useCallback((expired = false) => {
+    setIsLoggedIn(false);
+    setUseremail('');
+    setToken('');
+    setIsExpired(expired);
+    localStorage.removeItem('isLoggedIn_demo');
+    localStorage.removeItem('useremail_demo');
+    localStorage.removeItem('token_demo');
 
     if (logoutTimer) {
       clearTimeout(logoutTimer);
+      logoutTimer = null;
     }
 
-    if (remaining > 0) {
-        logoutTimer = setTimeout(() => {
-        logout(true);
-      }, remaining);
+    if (!expired) {
+      api.post('/api/users/logout').catch((error) => {
+        console.error('Could not revoke the refresh token on the server.', error);
+      });
     }
   }, []);
   
@@ -61,38 +62,58 @@ export const AuthProvider = ({ children }) => {
     localStorage.setItem('token_demo', token);
   }, [isLoggedIn, useremail, token]);
 
-  // expiry check
   useEffect(() => {
-    if (token) {
-      if (isTokenExpired(token)) {
-        logout(true);
-      } else {
-        scheduleAutoLogout(token);
+    const handleTokenRefreshed = (event) => {
+      setToken(event.detail);
+      setIsLoggedIn(true);
+    };
+    const handleRefreshFailed = () => logout(true);
+
+    window.addEventListener('auth:token-refreshed', handleTokenRefreshed);
+    window.addEventListener('auth:refresh-failed', handleRefreshFailed);
+
+    return () => {
+      window.removeEventListener('auth:token-refreshed', handleTokenRefreshed);
+      window.removeEventListener('auth:refresh-failed', handleRefreshFailed);
+    };
+  }, [logout]);
+
+  // Renew before expiration, including when restoring a saved session.
+  useEffect(() => {
+    if (!token) {
+      if (isLoggedIn) {
+        refreshAccessToken().catch((error) => {
+          if (error.response?.status !== 401) {
+            console.error('Could not restore the session.', error);
+          }
+        });
       }
+      return undefined;
     }
-  }, [scheduleAutoLogout, token]);
+
+    const remaining = getRemainingTime(token);
+    const refreshIn = Math.max(remaining - 60_000, 0);
+    logoutTimer = setTimeout(() => {
+      refreshAccessToken().catch((error) => {
+        if (error.response?.status !== 401) {
+          console.error('Could not refresh the session.', error);
+        }
+      });
+    }, refreshIn);
+
+    return () => {
+      if (logoutTimer) {
+        clearTimeout(logoutTimer);
+        logoutTimer = null;
+      }
+    };
+  }, [isLoggedIn, token]);
 
   const login = (email, token) => {
     setIsLoggedIn(true);
     setUseremail(email);
     setToken(token);
-
-    if (!isTokenExpired(token)) {
-      scheduleAutoLogout(token);
-    } else {
-      logout(true);
-    }
-  };
-
-  const logout = (expired) => {
-    setIsLoggedIn(false);
-    setUseremail('');
-    setToken('');
-    setIsExpired(expired);
-    
-    if (logoutTimer) {
-      clearTimeout(logoutTimer);
-    }
+    setIsExpired(false);
   };
 
   return (
