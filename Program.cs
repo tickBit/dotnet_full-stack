@@ -7,7 +7,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using System.Security.Claims;
-using Microsoft.AspNetCore.Mvc;
+using System.Security.Cryptography;
+using System.Data;
 
 // DotNetEnv lataa .env-tiedoston (jos käytät)
 DotNetEnv.Env.Load();
@@ -18,9 +19,13 @@ var builder = WebApplication.CreateBuilder(args);
 var connString = Environment.GetEnvironmentVariable("DEFAULT_CONNSTRING") 
                  ?? "Server=(localdb)\\MSSQLLocalDB;Database=AuthApiDb;Trusted_Connection=True;";
 
-var jwtKey = Environment.GetEnvironmentVariable("JWT_KEY") ?? "SUPER_SECRET_KEY_123_FOR_MY_AND_EVERYONE_ELSES_EYES_ONLY";
-var jwtIssuer = Environment.GetEnvironmentVariable("JWT_ISSUER") ?? "AuthApi";
-var jwtAudience = Environment.GetEnvironmentVariable("JWT_AUDIENCE") ?? "AuthApi";
+var jwtKey = builder.Configuration["JWT_KEY"]
+    ?? throw new InvalidOperationException("The JWT_KEY environment variable is required.");
+if (Encoding.UTF8.GetByteCount(jwtKey) < 32)
+    throw new InvalidOperationException("The JWT_KEY environment variable must be at least 32 bytes long.");
+
+var jwtIssuer = builder.Configuration["JWT_ISSUER"] ?? builder.Configuration["Jwt:Issuer"] ?? "AuthApi";
+var jwtAudience = builder.Configuration["JWT_AUDIENCE"] ?? builder.Configuration["Jwt:Audience"] ?? "AuthApi";
 
 // Palvelut
 builder.Services.AddDbContext<AppDbContext>(opts =>
@@ -36,6 +41,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateIssuer = true,
             ValidateAudience = true,
             ValidateIssuerSigningKey = true,
+            ValidateLifetime = true,
+            ClockSkew = TimeSpan.FromSeconds(30),
             ValidIssuer = jwtIssuer,
             ValidAudience = jwtAudience,
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey))
@@ -52,7 +59,8 @@ builder.Services.AddCors(options =>
         policy
             .WithOrigins("http://localhost:3000")
             .AllowAnyMethod()
-            .AllowAnyHeader();
+            .AllowAnyHeader()
+            .AllowCredentials();
     });
 });
 
@@ -63,10 +71,70 @@ app.UseCors(myAllowSpecificOrigins);
 app.UseAuthentication();
 app.UseAuthorization();
 
-// Routes
-app.MapPost("/api/users/register", async (AppDbContext db, JwtService jwt, RegisterRequest req) =>
+const string RefreshCookieName = "refreshToken";
+const int RefreshTokenLifetimeDays = 30;
+
+void SetRefreshCookie(HttpContext context, string token, DateTimeOffset expiresAt)
 {
-    if (db.Users.Any(u => u.Email == req.Email))
+    context.Response.Cookies.Append(RefreshCookieName, token, new CookieOptions
+    {
+        HttpOnly = true,
+        Secure = !app.Environment.IsDevelopment(),
+        SameSite = SameSiteMode.Lax,
+        Path = "/api/users",
+        Expires = expiresAt
+    });
+}
+
+void ClearRefreshCookie(HttpContext context)
+{
+    context.Response.Cookies.Delete(RefreshCookieName, new CookieOptions
+    {
+        HttpOnly = true,
+        Secure = !app.Environment.IsDevelopment(),
+        SameSite = SameSiteMode.Lax,
+        Path = "/api/users"
+    });
+}
+
+static string HashRefreshToken(string token) =>
+    Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(token)));
+
+static string CreateRefreshToken() =>
+    Convert.ToBase64String(RandomNumberGenerator.GetBytes(64))
+        .TrimEnd('=')
+        .Replace('+', '-')
+        .Replace('/', '_');
+
+async Task<(string Token, DateTimeOffset ExpiresAt)> SaveRefreshTokenAsync(
+    AppDbContext db,
+    int userId,
+    CancellationToken cancellationToken)
+{
+    var token = CreateRefreshToken();
+    var expiresAt = DateTimeOffset.UtcNow.AddDays(RefreshTokenLifetimeDays);
+
+    db.RefreshTokens.Add(new RefreshToken
+    {
+        UserId = userId,
+        TokenHash = HashRefreshToken(token),
+        CreatedAtUtc = DateTimeOffset.UtcNow,
+        ExpiresAtUtc = expiresAt
+    });
+    await db.SaveChangesAsync(cancellationToken);
+
+    return (token, expiresAt);
+}
+
+// Routes
+app.MapPost("/api/users/register", async (
+    AppDbContext db,
+    JwtService jwt,
+    HttpContext context,
+    RegisterRequest req,
+    CancellationToken cancellationToken) =>
+{
+    if (await db.Users.AnyAsync(u => u.Email == req.Email, cancellationToken))
         return Results.BadRequest("Email already registered");
 
     var user = new AppUser
@@ -76,22 +144,115 @@ app.MapPost("/api/users/register", async (AppDbContext db, JwtService jwt, Regis
     };
 
     db.Users.Add(user);
-    await db.SaveChangesAsync();
+    await db.SaveChangesAsync(cancellationToken);
 
+    var refreshToken = await SaveRefreshTokenAsync(db, user.Id, cancellationToken);
+    SetRefreshCookie(context, refreshToken.Token, refreshToken.ExpiresAt);
     var token = jwt.GenerateToken(user);
     return Results.Ok(new { token });
 });
 
-app.MapPost("/api/users/login", async (AppDbContext db, JwtService jwt, LoginRequest req) =>
+app.MapPost("/api/users/login", async (
+    AppDbContext db,
+    JwtService jwt,
+    HttpContext context,
+    LoginRequest req,
+    CancellationToken cancellationToken) =>
 {
-    var user = db.Users.SingleOrDefault(u => u.Email == req.Email);
+    var user = await db.Users.SingleOrDefaultAsync(u => u.Email == req.Email, cancellationToken);
     if (user == null) return Results.BadRequest("Invalid credentials");
 
     if (!BCrypt.Net.BCrypt.Verify(req.Password, user.PasswordHash))
         return Results.BadRequest("Invalid credentials");
 
+    var refreshToken = await SaveRefreshTokenAsync(db, user.Id, cancellationToken);
+    SetRefreshCookie(context, refreshToken.Token, refreshToken.ExpiresAt);
     var token = jwt.GenerateToken(user);
     return Results.Ok(new { token });
+});
+
+app.MapPost("/api/users/refresh", async (
+    AppDbContext db,
+    JwtService jwt,
+    HttpContext context,
+    CancellationToken cancellationToken) =>
+{
+    var presentedToken = context.Request.Cookies[RefreshCookieName];
+    if (string.IsNullOrEmpty(presentedToken))
+    {
+        ClearRefreshCookie(context);
+        return Results.Unauthorized();
+    }
+
+    await using var transaction = await db.Database.BeginTransactionAsync(
+        IsolationLevel.Serializable,
+        cancellationToken);
+
+    var now = DateTimeOffset.UtcNow;
+    var presentedTokenHash = HashRefreshToken(presentedToken);
+    var storedToken = await db.RefreshTokens
+        .SingleOrDefaultAsync(
+            token => token.TokenHash == presentedTokenHash,
+            cancellationToken);
+
+    if (storedToken is null || storedToken.RevokedAtUtc is not null || storedToken.ExpiresAtUtc <= now)
+    {
+        await transaction.RollbackAsync(cancellationToken);
+        ClearRefreshCookie(context);
+        return Results.Unauthorized();
+    }
+
+    var user = await db.Users.SingleOrDefaultAsync(
+        candidate => candidate.Id == storedToken.UserId,
+        cancellationToken);
+
+    if (user is null)
+    {
+        storedToken.RevokedAtUtc = now;
+        await db.SaveChangesAsync(cancellationToken);
+        await transaction.CommitAsync(cancellationToken);
+        ClearRefreshCookie(context);
+        return Results.Unauthorized();
+    }
+
+    storedToken.RevokedAtUtc = now;
+    var replacementToken = CreateRefreshToken();
+    var replacementExpiresAt = now.AddDays(RefreshTokenLifetimeDays);
+    db.RefreshTokens.Add(new RefreshToken
+    {
+        UserId = user.Id,
+        TokenHash = HashRefreshToken(replacementToken),
+        CreatedAtUtc = now,
+        ExpiresAtUtc = replacementExpiresAt
+    });
+
+    await db.SaveChangesAsync(cancellationToken);
+    await transaction.CommitAsync(cancellationToken);
+
+    SetRefreshCookie(context, replacementToken, replacementExpiresAt);
+    return Results.Ok(new { token = jwt.GenerateToken(user) });
+});
+
+app.MapPost("/api/users/logout", async (AppDbContext db, HttpContext context, CancellationToken cancellationToken) =>
+{
+    var presentedToken = context.Request.Cookies[RefreshCookieName];
+    if (!string.IsNullOrEmpty(presentedToken))
+    {
+        var presentedTokenHash = HashRefreshToken(presentedToken);
+        var storedToken = await db.RefreshTokens
+            .SingleOrDefaultAsync(
+                token => token.TokenHash == presentedTokenHash,
+                cancellationToken);
+
+        if (storedToken is not null && storedToken.RevokedAtUtc is null)
+        {
+            storedToken.RevokedAtUtc = DateTimeOffset.UtcNow;
+            await db.SaveChangesAsync(cancellationToken);
+        }
+    }
+
+    ClearRefreshCookie(context);
+    return Results.NoContent();
 });
 
 app.MapDelete("/api/users/delete", [Authorize] async (AppDbContext db, HttpContext context) =>
