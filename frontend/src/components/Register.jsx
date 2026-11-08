@@ -3,7 +3,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { useNavigate } from 'react-router';
 import Header from "./Header";
 import Dialog from "./Dialog";
-import axios from 'axios';
+import api from '../services/api';
 
 const Register = () => {
 
@@ -53,7 +53,7 @@ const Register = () => {
         if (passwordsOk && emailOk) {
             
             try {
-                const resp = await axios.post("http://localhost:5079/api/users/register", {
+                const resp = await api.post("/api/users/register", {
                     email: email,
                     password: password
                 }, {
