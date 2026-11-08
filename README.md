@@ -11,7 +11,7 @@
 - Sovelluksessa on sivutus (engl. pagination).
 - "My Account":ia klikkaamalla kirjautuneena tulee menu, jossa "Profile" ja "Logout".
 
-- Token kestää yhden tunnin, minkä jälkeen käyttäjä kirjataan ulos. Tällöin käyttäjä saa tiedon, että hänen istuntonsa vanheni.
+- Access token kestää 15 minuuttia. Refresh token on 30 päivän HttpOnly-cookie, jota backend kierrättää `/api/users/refresh`-kutsussa. Kirjautuminen ja rekisteröityminen asettavat refresh-cookien; `/api/users/logout` peruuttaa sen.
 - Kirjautunut käyttäjä voi etsiä muistiinpanoja hakusanalla.
 
 HUOM! Selaimen Local Storage on syytä tarvittaessa tyhjentää `http://localhost:3000` kohdalta aluksi.
@@ -68,12 +68,19 @@ JWT_AUDIENCE=AuthApi
 
 DEFAULT_CONNSTRING=Server=(localdb)\MSSQLLocalDB;Database=AuthApiDb;Trusted_Connection=True;
 
+JWT_KEY-arvon tulee olla vähintään 32 tavua pitkä ja sitä ei tule tallentaa versionhallintaan.
+
+### Refresh token -tietokantamuutos
+
+Refresh token -taulun migraatio sisältyy projektiin. Päivitä tietokanta:
+
+`dotnet ef database update`
+
+Frontend käyttää yhteistä Axios-asiakasta, joka lähettää cookiet (`withCredentials: true`), uusii access tokenin minuutti ennen vanhenemista ja yrittää suojatun pyynnön kerran uudelleen 401-vastauksen jälkeen. Jos refresh token ei enää kelpaa, käyttäjä kirjataan ulos. API:n osoitteen voi vaihtaa `REACT_APP_API_URL`-ympäristömuuttujalla; oletus on `http://localhost:5079`.
+
 
 #### Kuva
 
 ![Notes-demo](https://github.com/user-attachments/assets/49f90bca-ce81-4923-8bd3-f814aaf5a5b1)
 
 Paranneltu menu klikattu näkyviin. Hakutuloksia näkyy ja niissä sivutus (pagination).
-
-
-
