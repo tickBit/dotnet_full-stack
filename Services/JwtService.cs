@@ -13,7 +13,9 @@ public class JwtService
 
     public string GenerateToken(AppUser user)
     {
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["JWT_KEY"] ?? "SUPER_SECRET_KEY_123"));
+        var signingKey = _config["JWT_KEY"]
+            ?? throw new InvalidOperationException("The JWT_KEY environment variable is required.");
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(signingKey));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
         var claims = new[]
@@ -23,10 +25,10 @@ public class JwtService
         };
 
         var token = new JwtSecurityToken(
-            issuer: _config["JWT_ISSUER"] ?? "AuthApi",
-            audience: _config["JWT_AUDIENCE"] ?? "AuthApi",
+            issuer: _config["JWT_ISSUER"] ?? _config["Jwt:Issuer"] ?? "AuthApi",
+            audience: _config["JWT_AUDIENCE"] ?? _config["Jwt:Audience"] ?? "AuthApi",
             claims: claims,
-            expires: DateTime.Now.AddHours(1),
+            expires: DateTime.UtcNow.AddMinutes(15),
             signingCredentials: creds
         );
 
