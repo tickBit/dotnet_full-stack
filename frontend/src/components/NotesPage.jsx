@@ -1,4 +1,4 @@
-import axios from 'axios';
+import api from '../services/api';
 import React, { useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import Dialog from './Dialog';
@@ -41,7 +41,7 @@ const NotesPage = () => {
             return;
         }
         
-        await axios.get("http://localhost:5079/api/search", {
+        await api.get("/api/search", {
                     headers: { Authorization: `Bearer ${token}` },
                     params: { keyword: value, page: searchResultsPage, pageSize: 2 }
 
@@ -87,7 +87,7 @@ const NotesPage = () => {
         if (e.code === "Enter") {
         
             try {
-                const resp = await axios.put(`http://localhost:5079/api/info/${id}`,
+                const resp = await api.put(`/api/info/${id}`,
                     { note: editedText },   // dto
                     {
                     headers: {
@@ -117,7 +117,7 @@ const NotesPage = () => {
         setShowConfirmDelete(false);
         
         try {
-            const resp = await axios.delete(`http://localhost:5079/api/info/${id}`, {
+            const resp = await api.delete(`/api/info/${id}`, {
                 headers: {
                 Authorization: `Bearer ${token}`
             }
@@ -152,7 +152,7 @@ const NotesPage = () => {
         }
         
         try {
-            const resp = await axios.post("http://localhost:5079/api/info", {note: note}, {
+            const resp = await api.post("/api/info", {note: note}, {
                 headers: {
                         Authorization: `Bearer ${token}`,
                         "Content-Type": "application/json"
@@ -198,7 +198,7 @@ const NotesPage = () => {
                 return;
             }
             
-            await axios.get("http://localhost:5079/api/search", {
+            await api.get("/api/search", {
                         headers: { Authorization: `Bearer ${token}` },
                         params: { keyword: value, page: searchResultsPage, pageSize: 2 }
 
@@ -226,7 +226,7 @@ const NotesPage = () => {
             
             setLoading(true);
             
-            await axios.get("http://localhost:5079/api/info", {
+            await api.get("/api/info", {
                     headers: { Authorization: `Bearer ${token}` },
                     params: { page: page, pageSize: pageSize }
 
