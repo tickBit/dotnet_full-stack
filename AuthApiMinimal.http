@@ -1,6 +1,16 @@
 @AuthApiMinimal_HostAddress = http://localhost:5079
 
-GET {{AuthApiMinimal_HostAddress}}/weatherforecast/
-Accept: application/json
+### Kirjaudu sisään (refresh token tallentuu HttpOnly-cookieen)
+POST {{AuthApiMinimal_HostAddress}}/api/users/login
+Content-Type: application/json
 
-###
+{
+  "email": "user@example.com",
+  "password": "replace-with-password"
+}
+
+### Uusi access token (lähetä login-pyynnön cookiet)
+POST {{AuthApiMinimal_HostAddress}}/api/users/refresh
+
+### Kirjaudu ulos ja peruuta refresh token
+POST {{AuthApiMinimal_HostAddress}}/api/users/logout
