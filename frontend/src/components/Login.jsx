@@ -1,4 +1,4 @@
-import axios from "axios";
+import api from "../services/api";
 import { Link } from "react-router";
 import Header from "./Header";
 import { useAuth } from "../contexts/AuthContext";
@@ -42,7 +42,7 @@ const Login = () => {
         // a waiting state is used to inform user
         try {
             setWaiting(true);
-            resp = await axios.post("http://localhost:5079/api/users/login", {
+            resp = await api.post("/api/users/login", {
                     email: email,
                     password: password
                 }, {
@@ -69,6 +69,8 @@ const Login = () => {
         } catch (error) {
             setStatus(error.response ? error.response.data : "Error.");
             setBackgroundColor("red");
+        } finally {
+            setWaiting(false);
         }
         
         document.getElementById("email").value = "";
